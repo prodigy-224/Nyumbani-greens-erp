@@ -16,8 +16,8 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Nyumbani Greens ERP | Farm-to-Customer Operations',
-  description: 'Dark-mode-native operations platform for farm-to-customer food business. Manage sourcing, production, inventory, and sales with precision.',
+  title: 'Nyumbani Greens ERP | Batch-Centric Operations Platform',
+  description: 'Batch-centric ERP system for farm-to-customer operations. Track Product Orders from sourcing through production, inventory, and Zoho sales integration with full traceability.',
   generator: 'v0.app',
   icons: {
     icon: [
