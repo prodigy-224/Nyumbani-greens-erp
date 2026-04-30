@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, X, Bell, ChevronDown, Leaf } from "lucide-react"
+import Image from "next/image"
+import { Menu, X, Bell, ChevronDown } from "lucide-react"
 
 const navItems = [
   { name: "Sourcing", href: "#sourcing" },
@@ -20,9 +21,13 @@ export function Navigation() {
       <nav className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-3 lg:px-8">
         {/* Logo */}
         <a href="#" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2D8A3E]">
-            <Leaf className="h-5 w-5 text-white" />
-          </div>
+          <Image
+            src="/nyumbani-logo.avif"
+            alt="Nyumbani Greens"
+            width={32}
+            height={32}
+            className="h-8 w-auto"
+          />
           <span className="text-lg font-medium text-text-primary">Nyumbani Greens</span>
         </a>
 

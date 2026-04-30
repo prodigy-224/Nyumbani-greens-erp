@@ -1,4 +1,4 @@
-import { Leaf } from "lucide-react"
+import Image from "next/image"
 
 export function Footer() {
   return (
@@ -7,9 +7,13 @@ export function Footer() {
         <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
           {/* Logo and tagline */}
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-nyumbani-green">
-              <Leaf className="h-5 w-5 text-white" />
-            </div>
+            <Image
+              src="/nyumbani-logo.avif"
+              alt="Nyumbani Greens"
+              width={32}
+              height={32}
+              className="h-8 w-auto"
+            />
             <div>
               <span className="text-sm font-medium text-text-primary">Nyumbani Greens</span>
               <p className="text-xs text-text-muted">Farm-to-Customer Operations</p>

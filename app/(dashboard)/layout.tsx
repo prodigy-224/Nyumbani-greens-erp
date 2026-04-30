@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   SidebarProvider,
@@ -20,7 +21,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import {
-  Leaf,
   LayoutDashboard,
   ShoppingCart,
   Factory,
@@ -99,9 +99,13 @@ export default function DashboardLayout({
       <Sidebar variant="sidebar" collapsible="icon">
         <SidebarHeader className="border-b border-border p-4">
           <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nyumbani-green">
-              <Leaf className="h-5 w-5 text-white" />
-            </div>
+            <Image
+              src="/nyumbani-logo.avif"
+              alt="Nyumbani Greens"
+              width={36}
+              height={36}
+              className="h-9 w-auto"
+            />
             <div className="flex flex-col group-data-[collapsible=icon]:hidden">
               <span className="text-sm font-semibold text-foreground">
                 Nyumbani Greens
