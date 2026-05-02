@@ -68,7 +68,7 @@ export function Footer() {
 
         <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-border-subtle pt-8 lg:flex-row lg:items-center">
           <p className="text-xs text-text-dim">
-            © 2026 Nyumbani Greens. All rights reserved.
+            © {new Date().getFullYear()} Nyumbani Greens. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs">
             <a
