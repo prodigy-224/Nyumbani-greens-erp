@@ -9,8 +9,11 @@ import {
   ShoppingCart,
   Factory,
   Package,
+  RefreshCw,
+  TrendingUp,
   Shield,
 } from "lucide-react";
+
 
 export default function LandingPage() {
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
@@ -41,16 +44,16 @@ export default function LandingPage() {
       borderColor: "border-blue-500/30",
     },
     {
-      icon: RefreshCwIcon,
-      title: "Zoho Integration",
+      icon: RefreshCw,
+      title: 'Zoho Integration',
       description:
         "Seamless synchronization with Zoho CRM and Books for complete end-to-end traceability.",
       color: "from-violet-500/20 to-violet-500/5",
       borderColor: "border-violet-500/30",
     },
     {
-      icon: TrendingUpIcon,
-      title: "Cost Analytics",
+      icon: TrendingUp,
+      title: 'Cost Analytics',
       description:
         "Detailed cost breakdowns by sourcing, production, and calculate accurate COGS and margins.",
       color: "from-orange-500/20 to-orange-500/5",
@@ -118,13 +121,13 @@ export default function LandingPage() {
             <div className="flex items-center gap-4">
               <Link
                 href="/login"
-                className="px-6 py-2 text-sm font-medium text-text-primary hover:text-nyumbani-green transition-colors"
+                className="px-6 py-2 text-sm font-medium text-text-primary hover:text-nyumbani-green transition-colors active:scale-95"
               >
                 Sign In
               </Link>
               <Link
                 href="/login"
-                className="px-6 py-2 text-sm font-medium bg-nyumbani-green text-white rounded-full hover:bg-nyumbani-green/90 transition-all duration-200"
+                className="px-6 py-2 text-sm font-medium bg-nyumbani-green text-white rounded-full hover:bg-nyumbani-green/90 active:scale-95 transition-all duration-200"
               >
                 Get Started
               </Link>
@@ -189,14 +192,14 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/login"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-nyumbani-green text-white font-medium rounded-full hover:bg-nyumbani-green/90 transition-all duration-200 hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-nyumbani-green text-white font-semibold rounded-full hover:bg-nyumbani-green/90 active:scale-95 transition-all duration-200"
             >
               Start Demo
               <ArrowRight size={20} />
             </Link>
             <a
               href="#features"
-              className="inline-flex items-center justify-center px-8 py-4 border border-border rounded-full font-medium hover:bg-neutral-900 transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 border border-border rounded-full font-semibold hover:bg-neutral-900 hover:border-border-subtle active:scale-95 transition-all duration-200"
             >
               Explore System
             </a>
@@ -217,28 +220,53 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {howItWorks.map((item, idx) => {
+            {[
+              {
+                step: '1',
+                title: 'Sourcing',
+                description: 'Create and manage Product Orders (POs) from suppliers with line items, costs, and payment tracking',
+                icon: ShoppingCart,
+              },
+              {
+                step: '2',
+                title: 'Production',
+                description: 'Track batch progression through 4 stages: Intake, Grading, Processing, Packaging with quality control',
+                icon: Factory,
+              },
+              {
+                step: '3',
+                title: 'Inventory',
+                description: 'Monitor punnet-level stock, freshness indicators, and record wastage/shrinkage in real-time',
+                icon: Package,
+              },
+              {
+                step: '4',
+                title: 'Sales',
+                description: 'Sync completed batches to Zoho, manage SKUs, track sales orders, and maintain full traceability',
+                icon: RefreshCw,
+              },
+            ].map((item, idx) => {
               const Icon = item.icon;
               return (
-                <div key={idx} className="relative">
-                  {idx < 3 && (
-                    <div className="hidden lg:block absolute top-1/3 -right-3 transform translate-x-1/2 text-text-muted">
-                      <ArrowRight size={24} />
+              <div key={idx} className="relative">
+                {idx < 3 && (
+                  <div className="hidden lg:block absolute top-1/3 -right-3 transform translate-x-1/2 text-text-muted">
+                    <ArrowRight size={24} />
+                  </div>
+                )}
+                <div className="bg-neutral-900/50 border border-border rounded-lg p-6 h-full flex flex-col">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="inline-flex p-2 bg-neutral-800 rounded-lg">
+                      <Icon size={24} className="text-nyumbani-green" />
                     </div>
-                  )}
-                  <div className="bg-neutral-900/50 border border-border rounded-lg p-6 h-full flex flex-col">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800 text-nyumbani-green">
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <div className="flex h-6 items-center justify-center rounded-full bg-nyumbani-green text-white font-medium text-sm px-2">
-                        {item.step}
-                      </div>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-nyumbani-green text-white font-bold text-sm">
+                      {item.step}
                     </div>
                     <h3 className="text-lg font-medium mb-2">{item.title}</h3>
                     <p className="text-text-muted flex-grow">{item.description}</p>
                   </div>
                 </div>
+              </div>
               );
             })}
           </div>
@@ -292,9 +320,10 @@ export default function LandingPage() {
       <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-16">
+
             <h2 className="text-4xl font-normal mb-4">Six Powerful Modules</h2>
             <p className="text-xl text-text-muted mb-6">
-              Access these features after logging in with your demo account
+              Access these features after logging in with your account
             </p>
             <div className="inline-block px-4 py-2 bg-nyumbani-green/10 border border-nyumbani-green/30 rounded-full">
                 <span className="text-sm text-nyumbani-green font-medium flex items-center gap-2">
@@ -357,7 +386,7 @@ export default function LandingPage() {
           </p>
           <Link
             href="/login"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-nyumbani-green text-white font-medium rounded-full hover:bg-nyumbani-green/90 transition-all duration-200 hover:scale-105"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-nyumbani-green text-white font-semibold rounded-full hover:bg-nyumbani-green/90 active:scale-95 transition-all duration-200"
           >
             Start Exploring
             <ArrowRight size={20} />
@@ -448,58 +477,10 @@ export default function LandingPage() {
           </div>
 
           <div className="border-t border-border pt-8 text-center text-sm text-text-muted">
-            <p>&copy; 2024 Nyumbani Greens. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Nyumbani Greens. All rights reserved.</p>
           </div>
         </div>
       </footer>
     </div>
-  );
-}
-
-// Helper icon components
-function ShoppingCartIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-9 0a1 1 0 11-2 0 1 1 0 012 0m8 0a1 1 0 11-2 0 1 1 0 012 0" />
-    </svg>
-  );
-}
-
-function RefreshCwIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36M20.49 15a9 9 0 01-14.85 3.36" />
-    </svg>
-  );
-}
-
-function TrendingUpIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" />
-      <path d="M13 2v7h7" />
-      <path d="M9 14l2 2 4-4" />
-    </svg>
   );
 }

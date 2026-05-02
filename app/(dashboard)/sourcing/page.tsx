@@ -71,10 +71,10 @@ export default function SourcingPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [selectedPO, setSelectedPO] = useState<
-    (typeof productOrders)[0] | null
-  >(null);
-
+  const [selectedPO, setSelectedPO] = useState<typeof productOrders[0] | null>(null);
+  const [createdPOs, setCreatedPOs] = useState<typeof productOrders>([]);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  
   // New PO form state
   const [newPO, setNewPO] = useState({
     supplier: "",
@@ -82,7 +82,9 @@ export default function SourcingPage() {
     lineItems: [{ product: "", kg: 0, pricePerKg: 0 }],
   });
 
-  const filteredOrders = productOrders.filter((po) => {
+  const allPOs = [...productOrders, ...createdPOs];
+
+  const filteredOrders = allPOs.filter((po) => {
     const matchesSearch =
       po.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       po.supplier.toLowerCase().includes(searchQuery.toLowerCase());
@@ -91,12 +93,10 @@ export default function SourcingPage() {
   });
 
   const stats = {
-    total: productOrders.length,
-    draft: productOrders.filter((po) => po.status === "Draft").length,
-    active: productOrders.filter(
-      (po) => !["Draft", "Closed"].includes(po.status),
-    ).length,
-    totalValue: productOrders.reduce((sum, po) => sum + po.totalCost, 0),
+    total: allPOs.length,
+    draft: allPOs.filter((po) => po.status === "Draft").length,
+    active: allPOs.filter((po) => !["Draft", "Closed"].includes(po.status)).length,
+    totalValue: allPOs.reduce((sum, po) => sum + po.totalCost, 0),
   };
 
   const addLineItem = () => {
@@ -131,6 +131,77 @@ export default function SourcingPage() {
       0,
     );
 
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    
+    if (!newPO.supplier.trim()) {
+      errors.supplier = "Supplier name is required";
+    }
+    if (!newPO.location.trim()) {
+      errors.location = "Location is required";
+    }
+    
+    const validLineItems = newPO.lineItems.filter(
+      (item) => item.product && item.kg > 0 && item.pricePerKg > 0
+    );
+    
+    if (validLineItems.length === 0) {
+      errors.lineItems = "At least one valid line item is required (product, kg > 0, price > 0)";
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSaveAsDraft = () => {
+    if (!validateForm()) return;
+
+    const poNumber = `PO-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${String(allPOs.length + 1).padStart(3, "0")}`;
+    const newPORecord = {
+      id: poNumber,
+      supplier: newPO.supplier,
+      location: newPO.location,
+      date: new Date().toISOString().slice(0, 10),
+      status: "Draft",
+      lineItems: newPO.lineItems.filter((item) => item.product && item.kg > 0 && item.pricePerKg > 0),
+      totalCost: calculatePOTotal(),
+      paymentStatus: "Pending",
+    };
+
+    setCreatedPOs([...createdPOs, newPORecord]);
+    resetForm();
+    setIsCreateOpen(false);
+  };
+
+  const handleConfirmPO = () => {
+    if (!validateForm()) return;
+
+    const poNumber = `PO-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${String(allPOs.length + 1).padStart(3, "0")}`;
+    const newPORecord = {
+      id: poNumber,
+      supplier: newPO.supplier,
+      location: newPO.location,
+      date: new Date().toISOString().slice(0, 10),
+      status: "Confirmed",
+      lineItems: newPO.lineItems.filter((item) => item.product && item.kg > 0 && item.pricePerKg > 0),
+      totalCost: calculatePOTotal(),
+      paymentStatus: "Pending",
+    };
+
+    setCreatedPOs([...createdPOs, newPORecord]);
+    resetForm();
+    setIsCreateOpen(false);
+  };
+
+  const resetForm = () => {
+    setNewPO({
+      supplier: "",
+      location: "",
+      lineItems: [{ product: "", kg: 0, pricePerKg: 0 }],
+    });
+    setValidationErrors({});
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Page Header */}
@@ -153,11 +224,23 @@ export default function SourcingPage() {
               <DialogTitle>Create New Product Order</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
+              {/* Validation Errors */}
+              {Object.keys(validationErrors).length > 0 && (
+                <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3">
+                  <p className="text-sm text-red-500 font-medium">Please fix the following errors:</p>
+                  <ul className="text-sm text-red-500/80 mt-2 space-y-1">
+                    {Object.entries(validationErrors).map(([key, error]) => (
+                      <li key={key}>• {error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
               {/* Supplier Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">
-                    Supplier Name
+                    Supplier Name <span className="text-red-500">*</span>
                   </label>
                   <Input
                     placeholder="Enter supplier name"
@@ -170,7 +253,7 @@ export default function SourcingPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">
-                    Location
+                    Location <span className="text-red-500">*</span>
                   </label>
                   <Input
                     placeholder="Sourcing location"
@@ -187,9 +270,9 @@ export default function SourcingPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium text-foreground">
-                    Line Items
+                    Line Items <span className="text-red-500">*</span>
                   </label>
-                  <Button variant="outline" size="sm" onClick={addLineItem}>
+                  <Button variant="outline" size="sm" onClick={addLineItem} className="hover:bg-muted">
                     <Plus className="mr-1 h-3 w-3" />
                     Add Product
                   </Button>
@@ -291,14 +374,27 @@ export default function SourcingPage() {
 
               {/* Actions */}
               <div className="flex justify-end gap-2 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setIsCreateOpen(false)}
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    resetForm();
+                    setIsCreateOpen(false);
+                  }}
+                  className="hover:bg-muted"
                 >
                   Cancel
                 </Button>
-                <Button variant="outline">Save as Draft</Button>
-                <Button className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90">
+                <Button 
+                  variant="outline"
+                  onClick={handleSaveAsDraft}
+                  className="hover:bg-muted"
+                >
+                  Save as Draft
+                </Button>
+                <Button 
+                  className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90 active:scale-95 transition-transform"
+                  onClick={handleConfirmPO}
+                >
                   Confirm & Lock PO
                 </Button>
               </div>
