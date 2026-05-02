@@ -14,7 +14,6 @@ import {
   Shield,
 } from "lucide-react";
 
-
 export default function LandingPage() {
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
 
@@ -45,7 +44,7 @@ export default function LandingPage() {
     },
     {
       icon: RefreshCw,
-      title: 'Zoho Integration',
+      title: "Zoho Integration",
       description:
         "Seamless synchronization with Zoho CRM and Books for complete end-to-end traceability.",
       color: "from-violet-500/20 to-violet-500/5",
@@ -53,7 +52,7 @@ export default function LandingPage() {
     },
     {
       icon: TrendingUp,
-      title: 'Cost Analytics',
+      title: "Cost Analytics",
       description:
         "Detailed cost breakdowns by sourcing, production, and calculate accurate COGS and margins.",
       color: "from-orange-500/20 to-orange-500/5",
@@ -222,51 +221,61 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[
               {
-                step: '1',
-                title: 'Sourcing',
-                description: 'Create and manage Product Orders (POs) from suppliers with line items, costs, and payment tracking',
+                step: "1",
+                title: "Sourcing",
+                description:
+                  "Create and manage Product Orders (POs) from suppliers with line items, costs, and payment tracking",
                 icon: ShoppingCart,
               },
               {
-                step: '2',
-                title: 'Production',
-                description: 'Track batch progression through 4 stages: Intake, Grading, Processing, Packaging with quality control',
+                step: "2",
+                title: "Production",
+                description:
+                  "Track batch progression through 4 stages: Intake, Grading, Processing, Packaging with quality control",
                 icon: Factory,
               },
               {
-                step: '3',
-                title: 'Inventory',
-                description: 'Monitor punnet-level stock, freshness indicators, and record wastage/shrinkage in real-time',
+                step: "3",
+                title: "Inventory",
+                description:
+                  "Monitor punnet-level stock, freshness indicators, and record wastage/shrinkage in real-time",
                 icon: Package,
               },
               {
-                step: '4',
-                title: 'Sales',
-                description: 'Sync completed batches to Zoho, manage SKUs, track sales orders, and maintain full traceability',
+                step: "4",
+                title: "Sales",
+                description:
+                  "Sync completed batches to Zoho, manage SKUs, track sales orders, and maintain full traceability",
                 icon: RefreshCw,
               },
             ].map((item, idx) => {
               const Icon = item.icon;
               return (
-              <div key={idx} className="relative">
-                {idx < 3 && (
-                  <div className="hidden lg:block absolute top-1/3 -right-3 transform translate-x-1/2 text-text-muted">
-                    <ArrowRight size={24} />
-                  </div>
-                )}
-                <div className="bg-neutral-900/50 border border-border rounded-lg p-6 h-full flex flex-col">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="inline-flex p-2 bg-neutral-800 rounded-lg">
-                      <Icon size={24} className="text-nyumbani-green" />
+                <div key={idx} className="relative">
+                  {idx < 3 && (
+                    <div className="hidden lg:block absolute top-1/3 -right-3 transform translate-x-1/2 text-text-muted">
+                      <ArrowRight size={24} />
                     </div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-nyumbani-green text-white font-bold text-sm">
-                      {item.step}
+                  )}
+                  <div className="bg-neutral-900/50 border border-border rounded-lg p-6 h-full flex flex-col">
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="inline-flex p-2 bg-neutral-800 rounded-lg">
+                        <Icon className="h-6 w-6 text-nyumbani-green" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-nyumbani-green text-white text-sm font-medium">
+                            {item.step}
+                          </div>
+                          <h3 className="text-lg font-medium">{item.title}</h3>
+                        </div>
+                        <p className="text-text-muted mt-3">
+                          {item.description}
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="text-lg font-medium mb-2">{item.title}</h3>
-                    <p className="text-text-muted flex-grow">{item.description}</p>
                   </div>
                 </div>
-              </div>
               );
             })}
           </div>
@@ -320,17 +329,16 @@ export default function LandingPage() {
       <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-16">
-
             <h2 className="text-4xl font-normal mb-4">Six Powerful Modules</h2>
             <p className="text-xl text-text-muted mb-6">
               Access these features after logging in with your account
             </p>
             <div className="inline-block px-4 py-2 bg-nyumbani-green/10 border border-nyumbani-green/30 rounded-full">
-                <span className="text-sm text-nyumbani-green font-medium flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-nyumbani-green" />
-                  All modules require authentication
-                </span>
-              </div>
+              <span className="text-sm text-nyumbani-green font-medium flex items-center gap-2">
+                <Shield className="h-4 w-4 text-nyumbani-green" />
+                All modules require authentication
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -477,7 +485,10 @@ export default function LandingPage() {
           </div>
 
           <div className="border-t border-border pt-8 text-center text-sm text-text-muted">
-            <p>&copy; {new Date().getFullYear()} Nyumbani Greens. All rights reserved.</p>
+            <p>
+              &copy; {new Date().getFullYear()} Nyumbani Greens. All rights
+              reserved.
+            </p>
           </div>
         </div>
       </footer>

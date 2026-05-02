@@ -204,10 +204,10 @@ export default function ZohoPage() {
                       <th className="py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
                         Sold
                       </th>
-                      <th className="py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      <th className="py-3 text-right pr-6 text-xs font-medium uppercase tracking-wider text-muted-foreground">
                         Unsold
                       </th>
-                      <th className="py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      <th className="py-3 text-left pl-4 text-xs font-medium uppercase tracking-wider text-muted-foreground min-w-[10rem]">
                         Push Status
                       </th>
                       <th className="py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -247,10 +247,10 @@ export default function ZohoPage() {
                         <td className="py-3 text-right text-sm text-emerald">
                           {issue.punnetsSold}
                         </td>
-                        <td className="py-3 text-right text-sm text-amber">
+                        <td className="py-3 text-right text-sm text-amber pr-6">
                           {issue.punnetsUnsold}
                         </td>
-                        <td className="py-3">
+                        <td className="py-3 min-w-[10rem] whitespace-nowrap pl-4">
                           <Badge className={statusColors[issue.pushStatus]}>
                             {issue.pushStatus}
                           </Badge>

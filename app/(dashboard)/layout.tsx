@@ -213,12 +213,20 @@ export default function DashboardLayout({
               <Bell className="h-4 w-4" />
               <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-crimson" />
             </Button>
-            <Button
-              size="sm"
-              className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90"
-            >
-              + New PO
-            </Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" className="hidden md:inline-flex items-center gap-2 bg-background border border-border-subtle">
+                  Quick Actions
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => router.push('/sourcing?create=1')}>+ New PO</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push('/dashboard?sync=1')}>Sync Zoho</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push('/reports')}>Export</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 

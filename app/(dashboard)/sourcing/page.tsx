@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Plus,
   Search,
@@ -71,6 +72,19 @@ export default function SourcingPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    try {
+      const create = searchParams?.get("create");
+      if (create === "1" || create === "true") {
+        setIsCreateOpen(true);
+      }
+    } catch (e) {
+      // no-op
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [selectedPO, setSelectedPO] = useState<typeof productOrders[0] | null>(null);
   const [createdPOs, setCreatedPOs] = useState<typeof productOrders>([]);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
