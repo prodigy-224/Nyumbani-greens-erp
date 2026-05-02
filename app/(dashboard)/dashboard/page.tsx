@@ -12,6 +12,7 @@ import {
   ArrowRight,
   RefreshCw,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +44,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function DashboardPage() {
+  const router = useRouter();
   return (
     <div className="p-6 space-y-6">
       {/* Page Header */}
@@ -54,13 +56,18 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push("/dashboard?sync=1")}
+          >
             <RefreshCw className="mr-2 h-4 w-4" />
             Sync Zoho
           </Button>
           <Button
             size="sm"
             className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90"
+            onClick={() => router.push("/sourcing?create=1")}
           >
             + New Product Order
           </Button>
