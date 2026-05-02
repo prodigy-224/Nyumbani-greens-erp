@@ -30,106 +30,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import productionData from "@/data/production.json";
 
-// Mock production data
-const productionBatches = [
-  {
-    id: "PO-20260428-001",
-    supplier: "Kiambu Farms",
-    status: "Processing",
-    stage: 2,
-    lineItems: [
-      {
-        product: "Kunde",
-        sourcedKg: 25,
-        receivedKg: 23.5,
-        variance: -6,
-        grade: "Good",
-        preProcessKg: 23.5,
-        postProcessKg: 21.2,
-        wastage: 9.8,
-        punnets: 0,
-        punnetWeight: 250,
-      },
-      {
-        product: "Managu",
-        sourcedKg: 20,
-        receivedKg: 19.8,
-        variance: -1,
-        grade: "Excellent",
-        preProcessKg: 19.8,
-        postProcessKg: 18.5,
-        wastage: 6.6,
-        punnets: 0,
-        punnetWeight: 250,
-      },
-    ],
-  },
-  {
-    id: "PO-20260427-003",
-    supplier: "Thika Greens",
-    status: "Packaging",
-    stage: 3,
-    lineItems: [
-      {
-        product: "Terere",
-        sourcedKg: 30,
-        receivedKg: 29.5,
-        variance: -1.7,
-        grade: "Good",
-        preProcessKg: 29.5,
-        postProcessKg: 26.8,
-        wastage: 9.2,
-        punnets: 107,
-        punnetWeight: 250,
-      },
-      {
-        product: "Mrenda",
-        sourcedKg: 25,
-        receivedKg: 24.8,
-        variance: -0.8,
-        grade: "Excellent",
-        preProcessKg: 24.8,
-        postProcessKg: 23.1,
-        wastage: 6.9,
-        punnets: 92,
-        punnetWeight: 250,
-      },
-      {
-        product: "Sukuma",
-        sourcedKg: 40,
-        receivedKg: 39.2,
-        variance: -2,
-        grade: "Good",
-        preProcessKg: 39.2,
-        postProcessKg: 35.5,
-        wastage: 9.4,
-        punnets: 142,
-        punnetWeight: 250,
-      },
-    ],
-  },
-  {
-    id: "PO-20260428-003",
-    supplier: "Meru Highlands",
-    status: "Intake",
-    stage: 0,
-    lineItems: [
-      {
-        product: "Managu",
-        sourcedKg: 40,
-        receivedKg: 0,
-        variance: 0,
-        grade: null,
-        preProcessKg: 0,
-        postProcessKg: 0,
-        wastage: 0,
-        punnets: 0,
-        punnetWeight: 250,
-      },
-    ],
-  },
-];
+const productionBatches = productionData.productionBatches;
 
 const stages = [
   { name: "Intake", icon: Scale, description: "Verify received weight" },
@@ -145,7 +48,9 @@ const gradeColors: Record<string, string> = {
 };
 
 export default function ProductionPage() {
-  const [selectedBatch, setSelectedBatch] = useState<typeof productionBatches[0] | null>(null);
+  const [selectedBatch, setSelectedBatch] = useState<
+    (typeof productionBatches)[0] | null
+  >(null);
   const [intakeData, setIntakeData] = useState<Record<string, number>>({});
   const [gradeData, setGradeData] = useState<Record<string, string>>({});
 
@@ -261,8 +166,8 @@ export default function ProductionPage() {
                           status === "complete"
                             ? "bg-emerald text-white"
                             : status === "current"
-                            ? "bg-amber text-white animate-pulse"
-                            : "bg-muted text-muted-foreground"
+                              ? "bg-amber text-white animate-pulse"
+                              : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {status === "complete" ? (
@@ -303,7 +208,9 @@ export default function ProductionPage() {
                     <div className="space-y-1 text-xs text-muted-foreground">
                       <div className="flex justify-between">
                         <span>Sourced:</span>
-                        <span className="text-foreground">{item.sourcedKg} kg</span>
+                        <span className="text-foreground">
+                          {item.sourcedKg} kg
+                        </span>
                       </div>
                       {item.receivedKg > 0 && (
                         <>
@@ -330,7 +237,9 @@ export default function ProductionPage() {
                               <span>Wastage:</span>
                               <span
                                 className={
-                                  item.wastage > 10 ? "text-amber" : "text-emerald"
+                                  item.wastage > 10
+                                    ? "text-amber"
+                                    : "text-emerald"
                                 }
                               >
                                 {item.wastage.toFixed(1)}%
@@ -358,7 +267,10 @@ export default function ProductionPage() {
 
       {/* Batch Detail Modal */}
       {selectedBatch && (
-        <Dialog open={!!selectedBatch} onOpenChange={() => setSelectedBatch(null)}>
+        <Dialog
+          open={!!selectedBatch}
+          onOpenChange={() => setSelectedBatch(null)}
+        >
           <DialogContent className="max-w-4xl bg-card border-border max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <div className="flex items-center gap-2">
@@ -378,21 +290,26 @@ export default function ProductionPage() {
                 {stages.map((stage, index) => {
                   const status = getStageStatus(selectedBatch.stage, index);
                   return (
-                    <div key={stage.name} className="flex flex-col items-center flex-1">
+                    <div
+                      key={stage.name}
+                      className="flex flex-col items-center flex-1"
+                    >
                       <div
                         className={`flex items-center justify-center h-12 w-12 rounded-full mb-2 ${
                           status === "complete"
                             ? "bg-emerald text-white"
                             : status === "current"
-                            ? "bg-amber text-white"
-                            : "bg-muted text-muted-foreground"
+                              ? "bg-amber text-white"
+                              : "bg-muted text-muted-foreground"
                         }`}
                       >
                         <stage.icon className="h-5 w-5" />
                       </div>
                       <span
                         className={`text-sm font-medium ${
-                          status === "current" ? "text-amber" : "text-foreground"
+                          status === "current"
+                            ? "text-amber"
+                            : "text-foreground"
                         }`}
                       >
                         {stage.name}
@@ -454,11 +371,16 @@ export default function ProductionPage() {
                             type="number"
                             placeholder="Enter weight"
                             className="bg-input border-border"
-                            value={intakeData[`${selectedBatch.id}-${item.product}`] || ""}
+                            value={
+                              intakeData[
+                                `${selectedBatch.id}-${item.product}`
+                              ] || ""
+                            }
                             onChange={(e) =>
                               setIntakeData({
                                 ...intakeData,
-                                [`${selectedBatch.id}-${item.product}`]: parseFloat(e.target.value),
+                                [`${selectedBatch.id}-${item.product}`]:
+                                  parseFloat(e.target.value),
                               })
                             }
                           />
@@ -486,7 +408,11 @@ export default function ProductionPage() {
                         </label>
                         {selectedBatch.stage === 1 ? (
                           <Select
-                            value={gradeData[`${selectedBatch.id}-${item.product}`] || ""}
+                            value={
+                              gradeData[
+                                `${selectedBatch.id}-${item.product}`
+                              ] || ""
+                            }
                             onValueChange={(value) =>
                               setGradeData({
                                 ...gradeData,
@@ -498,7 +424,9 @@ export default function ProductionPage() {
                               <SelectValue placeholder="Select grade" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Excellent">Excellent</SelectItem>
+                              <SelectItem value="Excellent">
+                                Excellent
+                              </SelectItem>
                               <SelectItem value="Good">Good</SelectItem>
                               <SelectItem value="Bad">Bad</SelectItem>
                             </SelectContent>
@@ -536,13 +464,17 @@ export default function ProductionPage() {
                       <div className="mt-4 pt-4 border-t border-border">
                         <div className="grid grid-cols-4 gap-4 text-sm">
                           <div>
-                            <span className="text-muted-foreground">Pre-process:</span>
+                            <span className="text-muted-foreground">
+                              Pre-process:
+                            </span>
                             <span className="ml-2 text-foreground">
                               {item.preProcessKg} kg
                             </span>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">Post-process:</span>
+                            <span className="text-muted-foreground">
+                              Post-process:
+                            </span>
                             <span className="ml-2 text-foreground">
                               {item.postProcessKg} kg
                             </span>
@@ -550,12 +482,17 @@ export default function ProductionPage() {
                           <div>
                             <span className="text-muted-foreground">Lost:</span>
                             <span className="ml-2 text-amber">
-                              {(item.preProcessKg - item.postProcessKg).toFixed(1)} kg
+                              {(item.preProcessKg - item.postProcessKg).toFixed(
+                                1,
+                              )}{" "}
+                              kg
                             </span>
                           </div>
                           {item.punnets > 0 && (
                             <div>
-                              <span className="text-muted-foreground">Packed:</span>
+                              <span className="text-muted-foreground">
+                                Packed:
+                              </span>
                               <span className="ml-2 text-gold-link font-medium">
                                 {item.punnets} punnets
                               </span>
@@ -570,7 +507,10 @@ export default function ProductionPage() {
 
               {/* Actions */}
               <div className="flex justify-end gap-2 pt-4 border-t border-border">
-                <Button variant="outline" onClick={() => setSelectedBatch(null)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedBatch(null)}
+                >
                   Close
                 </Button>
                 {selectedBatch.stage === 0 && (

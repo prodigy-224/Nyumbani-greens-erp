@@ -1,4 +1,4 @@
-import Image from "next/image"
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -13,31 +13,54 @@ export function Footer() {
               width={32}
               height={32}
               className="h-8 w-auto"
+              style={{ width: "auto" }}
             />
             <div>
-              <span className="text-sm font-medium text-text-primary">Nyumbani Greens</span>
-              <p className="text-xs text-text-muted">Farm-to-Customer Operations</p>
+              <span className="text-sm font-medium text-text-primary">
+                Nyumbani Greens
+              </span>
+              <p className="text-xs text-text-muted">
+                Farm-to-Customer Operations
+              </p>
             </div>
           </div>
 
           {/* Links */}
           <div className="flex flex-wrap items-center gap-6 text-sm">
-            <a href="#sourcing" className="text-text-muted transition-colors hover:text-text-primary">
+            <a
+              href="#sourcing"
+              className="text-text-muted transition-colors hover:text-text-primary"
+            >
               Sourcing
             </a>
-            <a href="#production" className="text-text-muted transition-colors hover:text-text-primary">
+            <a
+              href="#production"
+              className="text-text-muted transition-colors hover:text-text-primary"
+            >
               Production
             </a>
-            <a href="#inventory" className="text-text-muted transition-colors hover:text-text-primary">
+            <a
+              href="#inventory"
+              className="text-text-muted transition-colors hover:text-text-primary"
+            >
               Inventory
             </a>
-            <a href="#zoho" className="text-text-muted transition-colors hover:text-text-primary">
+            <a
+              href="#zoho"
+              className="text-text-muted transition-colors hover:text-text-primary"
+            >
               Zoho
             </a>
-            <a href="#costs" className="text-text-muted transition-colors hover:text-text-primary">
+            <a
+              href="#costs"
+              className="text-text-muted transition-colors hover:text-text-primary"
+            >
               Costs
             </a>
-            <a href="#dashboard" className="text-text-muted transition-colors hover:text-text-primary">
+            <a
+              href="#dashboard"
+              className="text-text-muted transition-colors hover:text-text-primary"
+            >
               Dashboard
             </a>
           </div>
@@ -48,18 +71,27 @@ export function Footer() {
             © 2026 Nyumbani Greens. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs">
-            <a href="#" className="text-text-muted transition-colors hover:text-text-primary">
+            <a
+              href="#"
+              className="text-text-muted transition-colors hover:text-text-primary"
+            >
               Privacy Policy
             </a>
-            <a href="#" className="text-text-muted transition-colors hover:text-text-primary">
+            <a
+              href="#"
+              className="text-text-muted transition-colors hover:text-text-primary"
+            >
               Terms of Service
             </a>
-            <a href="#" className="text-text-muted transition-colors hover:text-text-primary">
+            <a
+              href="#"
+              className="text-text-muted transition-colors hover:text-text-primary"
+            >
               Support
             </a>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }

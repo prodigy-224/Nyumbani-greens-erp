@@ -1,0 +1,81 @@
+{
+  "productOrders": [
+    {
+      "id": "PO-20260428-001",
+      "supplier": "Kiambu Farms",
+      "date": "2026-04-28",
+      "status": "In Production",
+      "lineItems": [
+        { "product": "Kunde", "kg": 25, "pricePerKg": 150, "total": 3750 },
+        { "product": "Managu", "kg": 20, "pricePerKg": 180, "total": 3600 }
+      ],
+      "totalCost": 7350,
+      "paymentStatus": "Paid",
+      "location": "Kiambu County"
+    },
+    {
+      "id": "PO-20260427-003",
+      "supplier": "Thika Greens",
+      "date": "2026-04-27",
+      "status": "Packaging",
+      "lineItems": [
+        { "product": "Terere", "kg": 30, "pricePerKg": 120, "total": 3600 },
+        { "product": "Mrenda", "kg": 25, "pricePerKg": 200, "total": 5000 },
+        { "product": "Sukuma", "kg": 40, "pricePerKg": 100, "total": 4000 }
+      ],
+      "totalCost": 12600,
+      "paymentStatus": "Paid",
+      "location": "Thika Town"
+    },
+    {
+      "id": "PO-20260427-002",
+      "supplier": "Limuru Organics",
+      "date": "2026-04-27",
+      "status": "Ready for Sale",
+      "lineItems": [
+        { "product": "Spinach", "kg": 35, "pricePerKg": 250, "total": 8750 }
+      ],
+      "totalCost": 8750,
+      "paymentStatus": "Paid",
+      "location": "Limuru"
+    },
+    {
+      "id": "PO-20260426-001",
+      "supplier": "Kiambu Farms",
+      "date": "2026-04-26",
+      "status": "Closed",
+      "lineItems": [
+        { "product": "Kunde", "kg": 30, "pricePerKg": 150, "total": 4500 },
+        { "product": "Saga", "kg": 25, "pricePerKg": 220, "total": 5500 }
+      ],
+      "totalCost": 10000,
+      "paymentStatus": "Paid",
+      "location": "Kiambu County"
+    },
+    {
+      "id": "PO-20260428-002",
+      "supplier": "Naivasha Gardens",
+      "date": "2026-04-28",
+      "status": "Draft",
+      "lineItems": [
+        { "product": "Kale", "kg": 50, "pricePerKg": 80, "total": 4000 },
+        { "product": "Cabbage", "kg": 30, "pricePerKg": 60, "total": 1800 }
+      ],
+      "totalCost": 5800,
+      "paymentStatus": "Pending",
+      "location": "Naivasha"
+    },
+    {
+      "id": "PO-20260428-003",
+      "supplier": "Meru Highlands",
+      "date": "2026-04-28",
+      "status": "Confirmed",
+      "lineItems": [
+        { "product": "Managu", "kg": 40, "pricePerKg": 175, "total": 7000 }
+      ],
+      "totalCost": 7000,
+      "paymentStatus": "Pending",
+      "location": "Meru County"
+    }
+  ]
+}

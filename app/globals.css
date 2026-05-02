@@ -1,89 +1,105 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 /* Nyumbani Greens ERP Design System */
 :root {
+  /* HSL-based design tokens (Nyumbani design system) */
+  --colors-near-black: hsl(0 0% 6%);
+  --colors-dark: hsl(0 0% 9%);
+  --colors-dark-border: hsl(0 0% 14%);
+  --colors-border: hsl(0 0% 18%);
+  --colors-border-mid: hsl(0 0% 21%);
+
+  --colors-nyumbani-green: hsl(128 40% 35%);
+  --colors-green-link: hsl(146 50% 47%);
+  --colors-green-border: hsl(128 40% 35% / 0.3);
+
+  --colors-harvest-gold: hsl(42 67% 44%);
+  --colors-gold-link: hsl(44 88% 62%);
+  --colors-gold-border: hsl(42 67% 44% / 0.3);
+
+  --glass-dark: hsl(0 0% 16% / 0.84);
   /* Near-black backgrounds */
-  --background: #171717;
+  --background: var(--colors-dark);
   --foreground: #fafafa;
-  
+
   /* Card & surfaces */
   --card: #171717;
   --card-foreground: #fafafa;
   --card-elevated: #1c1c1c;
-  
+
   /* Popover */
   --popover: #171717;
   --popover-foreground: #fafafa;
-  
+
   /* Primary - Dark button */
-  --primary: #0f0f0f;
+  --primary: var(--colors-near-black);
   --primary-foreground: #fafafa;
-  
+
   /* Secondary */
   --secondary: #242424;
   --secondary-foreground: #fafafa;
-  
+
   /* Muted */
   --muted: #242424;
   --muted-foreground: #898989;
-  
+
   /* Accent - Nyumbani Green */
-  --accent: rgba(45, 138, 62, 0.15);
-  --accent-foreground: #3CB371;
-  
+  --accent: color-mix(in srgb, var(--colors-nyumbani-green) 15%, transparent);
+  --accent-foreground: var(--colors-green-link);
+
   /* Destructive */
   --destructive: rgba(220, 38, 38, 0.15);
   --destructive-foreground: #ef4444;
-  
+
   /* Border scale */
   --border: #2e2e2e;
   --border-subtle: #242424;
   --border-prominent: #363636;
   --border-light: #393939;
-  
+
   --input: #0f0f0f;
   --ring: #898989;
-  
+
   /* Brand Colors */
-  --nyumbani-green: #2D8A3E;
-  --green-link: #3CB371;
-  --green-border: rgba(45, 138, 62, 0.3);
-  
-  --harvest-gold: #D4A017;
-  --gold-link: #F0C040;
-  --gold-border: rgba(212, 160, 23, 0.3);
-  
+  --nyumbani-green: var(--colors-nyumbani-green);
+  --green-link: var(--colors-green-link);
+  --green-border: var(--colors-green-border);
+
+  --harvest-gold: var(--colors-harvest-gold);
+  --gold-link: var(--colors-gold-link);
+  --gold-border: var(--colors-gold-border);
+
   /* Text scale */
   --text-primary: #fafafa;
   --text-secondary: #b4b4b4;
   --text-muted: #898989;
   --text-dim: #4d4d4d;
-  
+
   /* Semantic colors */
-  --emerald: #3CB371;
-  --amber: #F0C040;
+  --emerald: #3cb371;
+  --amber: #f0c040;
   --crimson: #ef4444;
   --tomato: #f97316;
   --violet: #8b5cf6;
   --purple: #c084fc;
   --blue: #60a5fa;
-  
+
   /* Chart colors */
-  --chart-1: #3CB371;
-  --chart-2: #F0C040;
+  --chart-1: #3cb371;
+  --chart-2: #f0c040;
   --chart-3: #8b5cf6;
   --chart-4: #60a5fa;
   --chart-5: #f97316;
-  
+
   --radius: 0.5rem;
-  
+
   /* Sidebar */
   --sidebar: #171717;
   --sidebar-foreground: #fafafa;
-  --sidebar-primary: #2D8A3E;
+  --sidebar-primary: #2d8a3e;
   --sidebar-primary-foreground: #fafafa;
   --sidebar-accent: #242424;
   --sidebar-accent-foreground: #fafafa;
@@ -92,9 +108,12 @@
 }
 
 @theme inline {
-  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Consolas, monospace;
-  
+  --font-sans:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --font-mono:
+    "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -118,7 +137,7 @@
   --color-border-light: var(--border-light);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  
+
   /* Brand colors */
   --color-nyumbani-green: var(--nyumbani-green);
   --color-green-link: var(--green-link);
@@ -126,13 +145,13 @@
   --color-harvest-gold: var(--harvest-gold);
   --color-gold-link: var(--gold-link);
   --color-gold-border: var(--gold-border);
-  
+
   /* Text colors */
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
   --color-text-dim: var(--text-dim);
-  
+
   /* Semantic colors */
   --color-emerald: var(--emerald);
   --color-amber: var(--amber);
@@ -141,20 +160,20 @@
   --color-violet: var(--violet);
   --color-purple: var(--purple);
   --color-blue: var(--blue);
-  
+
   /* Chart colors */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  
+
   /* Radius */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  
+
   /* Sidebar */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -172,6 +191,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
