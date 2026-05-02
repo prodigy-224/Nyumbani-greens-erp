@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import { Menu, X, Bell, ChevronDown } from "lucide-react"
+import { useState } from "react";
+import Image from "next/image";
+import { Menu, X, Bell, ChevronDown } from "lucide-react";
 
 const navItems = [
   { name: "Sourcing", href: "#sourcing" },
@@ -11,10 +11,10 @@ const navItems = [
   { name: "Zoho Integration", href: "#zoho" },
   { name: "Costs", href: "#costs" },
   { name: "Dashboard", href: "#dashboard" },
-]
+];
 
 export function Navigation() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -27,8 +27,11 @@ export function Navigation() {
             width={32}
             height={32}
             className="h-8 w-auto"
+            style={{ width: "auto" }}
           />
-          <span className="text-lg font-medium text-text-primary">Nyumbani Greens</span>
+          <span className="text-lg font-medium text-text-primary">
+            Nyumbani Greens
+          </span>
         </a>
 
         {/* Desktop Nav */}
@@ -69,7 +72,11 @@ export function Navigation() {
             className="rounded-md p-2 text-text-muted lg:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
       </nav>
@@ -95,5 +102,5 @@ export function Navigation() {
         </div>
       )}
     </header>
-  )
+  );
 }

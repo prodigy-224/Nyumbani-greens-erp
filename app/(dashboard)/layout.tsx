@@ -101,7 +101,7 @@ export default function DashboardLayout({
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push("/login");
   };
 
   return (
@@ -115,6 +115,7 @@ export default function DashboardLayout({
               width={36}
               height={36}
               className="h-9 w-auto"
+              style={{ width: "auto" }}
             />
             <div className="flex flex-col group-data-[collapsible=icon]:hidden">
               <span className="text-sm font-semibold text-foreground">
@@ -177,7 +178,10 @@ export default function DashboardLayout({
                     Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-400 cursor-pointer">
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="text-red-400 cursor-pointer"
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     Log out
                   </DropdownMenuItem>
@@ -220,9 +224,7 @@ export default function DashboardLayout({
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto">
-          <ProtectedRoute>
-            {children}
-          </ProtectedRoute>
+          <ProtectedRoute>{children}</ProtectedRoute>
         </main>
       </SidebarInset>
     </SidebarProvider>

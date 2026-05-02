@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   BarChart3,
@@ -11,7 +11,9 @@ import {
   Package,
   RefreshCw,
   TrendingUp,
-} from 'lucide-react';
+  Shield,
+} from "lucide-react";
+
 
 export default function LandingPage() {
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
@@ -19,55 +21,84 @@ export default function LandingPage() {
   const features = [
     {
       icon: ShoppingCart,
-      title: 'Sourcing Management',
+      title: "Sourcing Management",
       description:
-        'Manage Product Orders from suppliers with full tracking, payment status, and cost management.',
-      color: 'from-emerald-500/20 to-emerald-500/5',
-      borderColor: 'border-emerald-500/30',
+        "Manage Product Orders from suppliers with full tracking, payment status, and cost management.",
+      color: "from-emerald-500/20 to-emerald-500/5",
+      borderColor: "border-emerald-500/30",
     },
     {
       icon: Factory,
-      title: 'Production Tracking',
+      title: "Production Tracking",
       description:
-        'Monitor batch progression through intake, grading, processing, and packaging stages in real-time.',
-      color: 'from-amber-500/20 to-amber-500/5',
-      borderColor: 'border-amber-500/30',
+        "Monitor batch progression through intake, grading, processing, and packaging stages in real-time.",
+      color: "from-amber-500/20 to-amber-500/5",
+      borderColor: "border-amber-500/30",
     },
     {
       icon: Package,
-      title: 'Inventory Management',
+      title: "Inventory Management",
       description:
-        'Track punnet-level inventory with freshness indicators, shrinkage recording, and stock alerts.',
-      color: 'from-blue-500/20 to-blue-500/5',
-      borderColor: 'border-blue-500/30',
+        "Track punnet-level inventory with freshness indicators, shrinkage recording, and stock alerts.",
+      color: "from-blue-500/20 to-blue-500/5",
+      borderColor: "border-blue-500/30",
     },
     {
       icon: RefreshCw,
       title: 'Zoho Integration',
       description:
-        'Seamless synchronization with Zoho CRM and Books for complete end-to-end traceability.',
-      color: 'from-violet-500/20 to-violet-500/5',
-      borderColor: 'border-violet-500/30',
+        "Seamless synchronization with Zoho CRM and Books for complete end-to-end traceability.",
+      color: "from-violet-500/20 to-violet-500/5",
+      borderColor: "border-violet-500/30",
     },
     {
       icon: TrendingUp,
       title: 'Cost Analytics',
       description:
-        'Detailed cost breakdowns by sourcing, production, and calculate accurate COGS and margins.',
-      color: 'from-orange-500/20 to-orange-500/5',
-      borderColor: 'border-orange-500/30',
+        "Detailed cost breakdowns by sourcing, production, and calculate accurate COGS and margins.",
+      color: "from-orange-500/20 to-orange-500/5",
+      borderColor: "border-orange-500/30",
     },
     {
       icon: BarChart3,
-      title: 'Advanced Reporting',
+      title: "Advanced Reporting",
       description:
-        'Comprehensive dashboards with KPIs, batch comparisons, product trends, and financial analysis.',
-      color: 'from-rose-500/20 to-rose-500/5',
-      borderColor: 'border-rose-500/30',
+        "Comprehensive dashboards with KPIs, batch comparisons, product trends, and financial analysis.",
+      color: "from-rose-500/20 to-rose-500/5",
+      borderColor: "border-rose-500/30",
     },
   ];
 
-
+  const howItWorks = [
+    {
+      step: "1",
+      title: "Sourcing",
+      description:
+        "Create and manage Product Orders (POs) from suppliers with line items, costs, and payment tracking",
+      icon: ShoppingCart,
+    },
+    {
+      step: "2",
+      title: "Production",
+      description:
+        "Track batch progression through intake, grading, processing, packaging with quality control",
+      icon: Factory,
+    },
+    {
+      step: "3",
+      title: "Inventory",
+      description:
+        "Monitor punnet-level stock, freshness indicators, and record wastage/shrinkage in real-time",
+      icon: BarChart3,
+    },
+    {
+      step: "4",
+      title: "Sales",
+      description:
+        "Sync completed batches to Zoho, manage SKUs, track sales orders, and maintain full traceability",
+      icon: Package,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-background text-text-primary overflow-hidden">
@@ -82,8 +113,9 @@ export default function LandingPage() {
                 width={32}
                 height={32}
                 className="h-8 w-auto"
+                style={{ width: "auto" }}
               />
-              <span className="text-xl font-bold">Nyumbani Greens</span>
+              <span className="text-xl font-medium">Nyumbani Greens</span>
             </Link>
 
             <div className="flex items-center gap-4">
@@ -119,29 +151,40 @@ export default function LandingPage() {
             </span>
           </div>
 
-          <h1 className="text-5xl sm:text-6xl font-bold mb-6 text-balance">
+          <h1 className="text-[4.5rem] sm:text-[5.5rem] leading-[1] font-normal mb-6 text-balance">
             Complete Visibility for
             <span className="bg-gradient-to-r from-nyumbani-green via-harvest-gold to-nyumbani-green bg-clip-text text-transparent">
-              {' '}
+              {" "}
               Food Operations
             </span>
           </h1>
 
-          <p className="text-xl text-text-muted mb-12 text-balance max-w-2xl mx-auto leading-relaxed">
-            Track every Product Order from sourcing through production, inventory management, and Zoho sales integration. Nyumbani Greens ERP provides complete traceability, accurate cost allocation, and real-time operational visibility.
+          <p className="text-xl text-text-muted mb-12 text-balance max-w-2xl mx-auto leading-6">
+            Track every Product Order from sourcing through production,
+            inventory management, and Zoho sales integration. Nyumbani Greens
+            ERP provides complete traceability, accurate cost allocation, and
+            real-time operational visibility.
           </p>
 
           <div className="grid grid-cols-3 gap-4 mb-12 max-w-2xl mx-auto">
             <div className="bg-neutral-900/50 border border-border rounded-lg p-6">
-              <div className="text-2xl sm:text-3xl font-bold text-nyumbani-green mb-1">100%</div>
-              <p className="text-xs sm:text-sm text-text-muted">Batch Traceability</p>
+              <div className="text-2xl sm:text-3xl font-normal text-nyumbani-green mb-1">
+                100%
+              </div>
+              <p className="text-xs sm:text-sm text-text-muted">
+                Batch Traceability
+              </p>
             </div>
             <div className="bg-neutral-900/50 border border-border rounded-lg p-6">
-              <div className="text-2xl sm:text-3xl font-bold text-harvest-gold mb-1">6+</div>
+              <div className="text-2xl sm:text-3xl font-normal text-harvest-gold mb-1">
+                6+
+              </div>
               <p className="text-xs sm:text-sm text-text-muted">Core Modules</p>
             </div>
             <div className="bg-neutral-900/50 border border-border rounded-lg p-6">
-              <div className="text-2xl sm:text-3xl font-bold text-nyumbani-green mb-1">Real-Time</div>
+              <div className="text-2xl sm:text-3xl font-normal text-nyumbani-green mb-1">
+                Real-Time
+              </div>
               <p className="text-xs sm:text-sm text-text-muted">Live Updates</p>
             </div>
           </div>
@@ -168,8 +211,12 @@ export default function LandingPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">End-to-End Batch Tracking</h2>
-            <p className="text-xl text-text-muted">From farm to customer, every step is tracked and measured</p>
+            <h2 className="text-4xl font-normal mb-4">
+              End-to-End Batch Tracking
+            </h2>
+            <p className="text-xl text-text-muted">
+              From farm to customer, every step is tracked and measured
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -215,9 +262,9 @@ export default function LandingPage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-nyumbani-green text-white font-bold text-sm">
                       {item.step}
                     </div>
+                    <h3 className="text-lg font-medium mb-2">{item.title}</h3>
+                    <p className="text-text-muted flex-grow">{item.description}</p>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                  <p className="text-text-muted flex-grow">{item.description}</p>
                 </div>
               </div>
               );
@@ -230,20 +277,40 @@ export default function LandingPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-neutral-950/50 border-y border-border">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Designed for Scale</h2>
-            <p className="text-xl text-text-muted">Built to handle high-volume farm-to-customer operations</p>
+            <h2 className="text-4xl font-normal mb-4">Designed for Scale</h2>
+            <p className="text-xl text-text-muted">
+              Built to handle high-volume farm-to-customer operations
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { metric: '∞', label: 'Batches', desc: 'Unlimited batch tracking and historical data' },
-              { metric: 'N:M', label: 'Line Items', desc: 'Multiple items per PO with individual costs' },
-              { metric: '4', label: 'Production Stages', desc: 'Full pipeline from intake to packaging' },
-              { metric: '100%', label: 'Traceability', desc: 'Complete audit trail for every transaction' },
+              {
+                metric: "∞",
+                label: "Batches",
+                desc: "Unlimited batch tracking and historical data",
+              },
+              {
+                metric: "N:M",
+                label: "Line Items",
+                desc: "Multiple items per PO with individual costs",
+              },
+              {
+                metric: "4",
+                label: "Production Stages",
+                desc: "Full pipeline from intake to packaging",
+              },
+              {
+                metric: "100%",
+                label: "Traceability",
+                desc: "Complete audit trail for every transaction",
+              },
             ].map((stat, idx) => (
               <div key={idx} className="text-center">
-                <div className="text-4xl sm:text-5xl font-bold text-nyumbani-green mb-2">{stat.metric}</div>
-                <div className="text-lg font-semibold mb-1">{stat.label}</div>
+                <div className="text-4xl sm:text-5xl font-normal text-nyumbani-green mb-2">
+                  {stat.metric}
+                </div>
+                <div className="text-lg font-medium mb-1">{stat.label}</div>
                 <p className="text-sm text-text-muted">{stat.desc}</p>
               </div>
             ))}
@@ -253,7 +320,17 @@ export default function LandingPage() {
       <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Six Powerful Modules</h2>
+
+            <h2 className="text-4xl font-normal mb-4">Six Powerful Modules</h2>
+            <p className="text-xl text-text-muted mb-6">
+              Access these features after logging in with your account
+            </p>
+            <div className="inline-block px-4 py-2 bg-nyumbani-green/10 border border-nyumbani-green/30 rounded-full">
+                <span className="text-sm text-nyumbani-green font-medium flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-nyumbani-green" />
+                  All modules require authentication
+                </span>
+              </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -273,11 +350,21 @@ export default function LandingPage() {
                   <div className="mb-4 inline-flex p-3 bg-neutral-800 rounded-lg group-hover:scale-110 transition-transform">
                     <Icon className="h-6 w-6 text-nyumbani-green" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-text-muted text-sm mb-4">{feature.description}</p>
+                  <h3 className="text-lg font-medium mb-2">{feature.title}</h3>
+                  <p className="text-text-muted text-sm mb-4">
+                    {feature.description}
+                  </p>
                   <div className="flex items-center gap-2 text-xs text-nyumbani-green font-medium">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10l-4.293-4.293a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     Login to explore
                   </div>
@@ -288,15 +375,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-
-
-
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-border bg-neutral-950/50">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-4xl font-bold mb-4">Try the Full ERP System</h2>
+          <h2 className="text-4xl font-normal mb-4">Try the Full ERP System</h2>
           <p className="text-xl text-text-muted mb-8">
-            No signup required. All modules are fully functional in the demo. Create orders, track batches, manage inventory, and see real-time operations in action.
+            No signup required. All modules are fully functional in the demo.
+            Create orders, track batches, manage inventory, and see real-time
+            operations in action.
           </p>
           <Link
             href="/login"
@@ -319,49 +405,70 @@ export default function LandingPage() {
                 width={32}
                 height={32}
                 className="h-8 w-auto mb-4"
+                style={{ width: "auto" }}
               />
-              <p className="text-sm text-text-muted">Farm-to-customer ERP system</p>
+              <p className="text-sm text-text-muted">
+                Farm-to-customer ERP system
+              </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Product</h4>
+              <h4 className="font-medium mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-text-muted">
                 <li>
-                  <a href="#features" className="hover:text-nyumbani-green transition-colors">
+                  <a
+                    href="#features"
+                    className="hover:text-nyumbani-green transition-colors"
+                  >
                     Features
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-nyumbani-green transition-colors">
+                  <a
+                    href="#"
+                    className="hover:text-nyumbani-green transition-colors"
+                  >
                     Pricing
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Company</h4>
+              <h4 className="font-medium mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-text-muted">
                 <li>
-                  <a href="#" className="hover:text-nyumbani-green transition-colors">
+                  <a
+                    href="#"
+                    className="hover:text-nyumbani-green transition-colors"
+                  >
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-nyumbani-green transition-colors">
+                  <a
+                    href="#"
+                    className="hover:text-nyumbani-green transition-colors"
+                  >
                     Contact
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
+              <h4 className="font-medium mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-text-muted">
                 <li>
-                  <a href="#" className="hover:text-nyumbani-green transition-colors">
+                  <a
+                    href="#"
+                    className="hover:text-nyumbani-green transition-colors"
+                  >
                     Privacy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-nyumbani-green transition-colors">
+                  <a
+                    href="#"
+                    className="hover:text-nyumbani-green transition-colors"
+                  >
                     Terms
                   </a>
                 </li>

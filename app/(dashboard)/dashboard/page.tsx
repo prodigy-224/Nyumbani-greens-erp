@@ -16,107 +16,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import dashboardData from "@/data/dashboard.json";
 
-// Mock data for dashboard
-const kpis = [
-  {
-    title: "Active Batches",
-    value: "12",
-    change: "+3",
-    trend: "up",
-    description: "Currently in pipeline",
-    icon: Package,
-    color: "emerald",
-  },
-  {
-    title: "Today's Revenue",
-    value: "KES 45,230",
-    change: "+12.5%",
-    trend: "up",
-    description: "From Zoho sync",
-    icon: DollarSign,
-    color: "gold",
-  },
-  {
-    title: "Avg Wastage",
-    value: "8.2%",
-    change: "-1.3%",
-    trend: "down",
-    description: "Last 30 days",
-    icon: Leaf,
-    color: "emerald",
-  },
-  {
-    title: "Net Margin",
-    value: "32.4%",
-    change: "+2.1%",
-    trend: "up",
-    description: "Last 30 days",
-    icon: TrendingUp,
-    color: "gold",
-  },
-];
+const kpis = dashboardData.kpis;
+const pipelineStages = dashboardData.pipelineStages;
+const recentBatches = dashboardData.recentBatches;
+const alerts = dashboardData.alerts;
+const syncStatus = dashboardData.syncStatus;
+const inventoryHealth = dashboardData.inventoryHealth;
+const weeklyPerformance = dashboardData.weeklyPerformance;
 
-const pipelineStages = [
-  { name: "Draft", count: 2, color: "bg-muted" },
-  { name: "Confirmed", count: 3, color: "bg-violet" },
-  { name: "In Production", count: 4, color: "bg-amber" },
-  { name: "Packaging", count: 2, color: "bg-blue" },
-  { name: "Ready for Sale", count: 1, color: "bg-emerald" },
-];
-
-const recentBatches = [
-  {
-    po: "PO-20260428-001",
-    supplier: "Kiambu Farms",
-    products: ["Kunde", "Managu"],
-    status: "In Production",
-    totalCost: "KES 12,500",
-    date: "Today",
-  },
-  {
-    po: "PO-20260427-003",
-    supplier: "Thika Greens",
-    products: ["Terere", "Mrenda", "Sukuma"],
-    status: "Packaging",
-    totalCost: "KES 18,200",
-    date: "Yesterday",
-  },
-  {
-    po: "PO-20260427-002",
-    supplier: "Limuru Organics",
-    products: ["Spinach"],
-    status: "Ready for Sale",
-    totalCost: "KES 8,750",
-    date: "Yesterday",
-  },
-  {
-    po: "PO-20260426-001",
-    supplier: "Kiambu Farms",
-    products: ["Kunde", "Saga"],
-    status: "Closed",
-    totalCost: "KES 15,300",
-    date: "2 days ago",
-  },
-];
-
-const alerts = [
-  {
-    type: "warning",
-    message: "PO-20260428-001: Kunde received 15kg vs 18kg sourced (16.7% variance)",
-    time: "2 hours ago",
-  },
-  {
-    type: "error",
-    message: "Zoho sync failed: 3 unmatched SKUs require review",
-    time: "4 hours ago",
-  },
-  {
-    type: "info",
-    message: "PO-20260427-003: Packaging complete, 240 punnets ready",
-    time: "5 hours ago",
-  },
-];
+const kpiIconMap = {
+  Package,
+  DollarSign,
+  Leaf,
+  TrendingUp,
+} as const;
 
 const statusColors: Record<string, string> = {
   Draft: "bg-muted text-muted-foreground",
@@ -154,46 +69,51 @@ export default function DashboardPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {kpis.map((kpi) => (
-          <Card key={kpi.title} className="border-border bg-card">
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">{kpi.title}</p>
-                  <p className="mt-1 text-2xl font-semibold text-foreground">
-                    {kpi.value}
-                  </p>
-                  <div className="mt-1 flex items-center gap-1">
-                    {kpi.trend === "up" ? (
-                      <TrendingUp className="h-3 w-3 text-emerald" />
-                    ) : (
-                      <TrendingDown className="h-3 w-3 text-emerald" />
-                    )}
-                    <span
-                      className={`text-xs ${
-                        kpi.trend === "up" ? "text-emerald" : "text-emerald"
-                      }`}
-                    >
-                      {kpi.change}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {kpi.description}
-                    </span>
+        {kpis.map((kpi) => {
+          const KpiIcon =
+            kpiIconMap[kpi.icon as keyof typeof kpiIconMap] ?? Package;
+
+          return (
+            <Card key={kpi.title} className="border-border bg-card">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">{kpi.title}</p>
+                    <p className="mt-1 text-2xl font-semibold text-foreground">
+                      {kpi.value}
+                    </p>
+                    <div className="mt-1 flex items-center gap-1">
+                      {kpi.trend === "up" ? (
+                        <TrendingUp className="h-3 w-3 text-emerald" />
+                      ) : (
+                        <TrendingDown className="h-3 w-3 text-emerald" />
+                      )}
+                      <span
+                        className={`text-xs ${
+                          kpi.trend === "up" ? "text-emerald" : "text-emerald"
+                        }`}
+                      >
+                        {kpi.change}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {kpi.description}
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                      kpi.color === "emerald"
+                        ? "bg-emerald/10 text-emerald"
+                        : "bg-amber/10 text-amber"
+                    }`}
+                  >
+                    <KpiIcon className="h-5 w-5" />
                   </div>
                 </div>
-                <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                    kpi.color === "emerald"
-                      ? "bg-emerald/10 text-emerald"
-                      : "bg-amber/10 text-amber"
-                  }`}
-                >
-                  <kpi.icon className="h-5 w-5" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Pipeline Overview & Alerts */}
@@ -252,8 +172,8 @@ export default function DashboardPage() {
                   alert.type === "error"
                     ? "border-crimson/30 bg-crimson/5"
                     : alert.type === "warning"
-                    ? "border-amber/30 bg-amber/5"
-                    : "border-border bg-background"
+                      ? "border-amber/30 bg-amber/5"
+                      : "border-border bg-background"
                 }`}
               >
                 <div className="flex items-start gap-2">
@@ -379,10 +299,10 @@ export default function DashboardPage() {
               <div>
                 <p className="text-lg font-semibold text-emerald flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4" />
-                  Connected
+                  {syncStatus.connected ? "Connected" : "Disconnected"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Last sync: 15 minutes ago
+                  Last sync: {new Date(syncStatus.lastSync).toLocaleString()}
                 </p>
               </div>
               <Button variant="outline" size="sm">
@@ -402,10 +322,10 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-lg font-semibold text-foreground">
-                  1,240 punnets
+                  {inventoryHealth.punnets.toLocaleString()} punnets
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Across 8 active batches
+                  Across {inventoryHealth.activeBatches} active batches
                 </p>
               </div>
               <Link
@@ -428,10 +348,10 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-lg font-semibold text-gold-link">
-                  KES 312,450
+                  {weeklyPerformance.revenue}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Revenue from 42 batches
+                  Revenue from {weeklyPerformance.batches} batches
                 </p>
               </div>
               <Link

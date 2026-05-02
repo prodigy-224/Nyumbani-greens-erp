@@ -1,0 +1,110 @@
+{
+  "kpis": [
+    {
+      "title": "Active Batches",
+      "value": "12",
+      "change": "+3",
+      "trend": "up",
+      "description": "Currently in pipeline",
+      "icon": "Package",
+      "color": "emerald"
+    },
+    {
+      "title": "Today's Revenue",
+      "value": "KES 45,230",
+      "change": "+12.5%",
+      "trend": "up",
+      "description": "From Zoho sync",
+      "icon": "DollarSign",
+      "color": "gold"
+    },
+    {
+      "title": "Avg Wastage",
+      "value": "8.2%",
+      "change": "-1.3%",
+      "trend": "down",
+      "description": "Last 30 days",
+      "icon": "Leaf",
+      "color": "emerald"
+    },
+    {
+      "title": "Net Margin",
+      "value": "32.4%",
+      "change": "+2.1%",
+      "trend": "up",
+      "description": "Last 30 days",
+      "icon": "TrendingUp",
+      "color": "gold"
+    }
+  ],
+  "pipelineStages": [
+    { "name": "Draft", "count": 2, "color": "bg-muted" },
+    { "name": "Confirmed", "count": 3, "color": "bg-violet" },
+    { "name": "In Production", "count": 4, "color": "bg-amber" },
+    { "name": "Packaging", "count": 2, "color": "bg-blue" },
+    { "name": "Ready for Sale", "count": 1, "color": "bg-emerald" }
+  ],
+  "recentBatches": [
+    {
+      "po": "PO-20260428-001",
+      "supplier": "Kiambu Farms",
+      "products": ["Kunde", "Managu"],
+      "status": "In Production",
+      "totalCost": "KES 12,500",
+      "date": "Today"
+    },
+    {
+      "po": "PO-20260427-003",
+      "supplier": "Thika Greens",
+      "products": ["Terere", "Mrenda", "Sukuma"],
+      "status": "Packaging",
+      "totalCost": "KES 18,200",
+      "date": "Yesterday"
+    },
+    {
+      "po": "PO-20260427-002",
+      "supplier": "Limuru Organics",
+      "products": ["Spinach"],
+      "status": "Ready for Sale",
+      "totalCost": "KES 8,750",
+      "date": "Yesterday"
+    },
+    {
+      "po": "PO-20260426-001",
+      "supplier": "Kiambu Farms",
+      "products": ["Kunde", "Saga"],
+      "status": "Closed",
+      "totalCost": "KES 15,300",
+      "date": "2 days ago"
+    }
+  ],
+  "alerts": [
+    {
+      "type": "warning",
+      "message": "PO-20260428-001: Kunde received 15kg vs 18kg sourced (16.7% variance)",
+      "time": "2 hours ago"
+    },
+    {
+      "type": "error",
+      "message": "Zoho sync failed: 3 unmatched SKUs require review",
+      "time": "4 hours ago"
+    },
+    {
+      "type": "info",
+      "message": "PO-20260427-003: Packaging complete, 240 punnets ready",
+      "time": "5 hours ago"
+    }
+  ],
+  "syncStatus": {
+    "connected": true,
+    "lastSync": "2026-04-28T14:30:00"
+  },
+  "inventoryHealth": {
+    "punnets": 1240,
+    "activeBatches": 8
+  },
+  "weeklyPerformance": {
+    "revenue": "KES 312,450",
+    "batches": 42
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "productionBatches": [
+    {
+      "id": "PO-20260428-001",
+      "supplier": "Kiambu Farms",
+      "status": "Processing",
+      "stage": 2,
+      "lineItems": [
+        {
+          "product": "Kunde",
+          "sourcedKg": 25,
+          "receivedKg": 23.5,
+          "variance": -6,
+          "grade": "Good",
+          "preProcessKg": 23.5,
+          "postProcessKg": 21.2,
+          "wastage": 9.8,
+          "punnets": 0,
+          "punnetWeight": 250
+        },
+        {
+          "product": "Managu",
+          "sourcedKg": 20,
+          "receivedKg": 19.8,
+          "variance": -1,
+          "grade": "Excellent",
+          "preProcessKg": 19.8,
+          "postProcessKg": 18.5,
+          "wastage": 6.6,
+          "punnets": 0,
+          "punnetWeight": 250
+        }
+      ]
+    },
+    {
+      "id": "PO-20260427-003",
+      "supplier": "Thika Greens",
+      "status": "Packaging",
+      "stage": 3,
+      "lineItems": [
+        {
+          "product": "Terere",
+          "sourcedKg": 30,
+          "receivedKg": 29.5,
+          "variance": -1.7,
+          "grade": "Good",
+          "preProcessKg": 29.5,
+          "postProcessKg": 26.8,
+          "wastage": 9.2,
+          "punnets": 107,
+          "punnetWeight": 250
+        },
+        {
+          "product": "Mrenda",
+          "sourcedKg": 25,
+          "receivedKg": 24.8,
+          "variance": -0.8,
+          "grade": "Excellent",
+          "preProcessKg": 24.8,
+          "postProcessKg": 23.1,
+          "wastage": 6.9,
+          "punnets": 92,
+          "punnetWeight": 250
+        },
+        {
+          "product": "Sukuma",
+          "sourcedKg": 40,
+          "receivedKg": 39.2,
+          "variance": -2,
+          "grade": "Good",
+          "preProcessKg": 39.2,
+          "postProcessKg": 35.5,
+          "wastage": 9.4,
+          "punnets": 142,
+          "punnetWeight": 250
+        }
+      ]
+    },
+    {
+      "id": "PO-20260428-003",
+      "supplier": "Meru Highlands",
+      "status": "Intake",
+      "stage": 0,
+      "lineItems": [
+        {
+          "product": "Managu",
+          "sourcedKg": 40,
+          "receivedKg": 0,
+          "variance": 0,
+          "grade": null,
+          "preProcessKg": 0,
+          "postProcessKg": 0,
+          "wastage": 0,
+          "punnets": 0,
+          "punnetWeight": 250
+        }
+      ]
+    }
+  ]
+}

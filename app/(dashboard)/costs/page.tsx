@@ -24,131 +24,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import costsData from "@/data/costs.json";
 
-// Mock cost catalogue data
-const costCatalogue = [
-  {
-    id: 1,
-    name: "Labour",
-    description: "Production staff wages per punnet",
-    ratePerPunnet: 8.0,
-    effectiveDate: "2026-01-01",
-    active: true,
-  },
-  {
-    id: 2,
-    name: "Electricity",
-    description: "Power costs for processing and cold storage",
-    ratePerPunnet: 3.5,
-    effectiveDate: "2026-01-01",
-    active: true,
-  },
-  {
-    id: 3,
-    name: "Packaging Materials",
-    description: "Punnet containers, labels, and seals",
-    ratePerPunnet: 12.0,
-    effectiveDate: "2026-03-15",
-    active: true,
-  },
-  {
-    id: 4,
-    name: "Delivery/Transport",
-    description: "Logistics and distribution costs",
-    ratePerPunnet: 5.0,
-    effectiveDate: "2026-01-01",
-    active: true,
-  },
-  {
-    id: 5,
-    name: "Quality Control",
-    description: "Testing and inspection costs",
-    ratePerPunnet: 2.0,
-    effectiveDate: "2026-02-01",
-    active: true,
-  },
-  {
-    id: 6,
-    name: "Cold Storage",
-    description: "Refrigeration and storage fees (deprecated)",
-    ratePerPunnet: 4.0,
-    effectiveDate: "2025-06-01",
-    active: false,
-  },
-];
-
-// Mock batch cost data
-const batchCosts = [
-  {
-    po: "PO-20260427-003",
-    product: "Terere",
-    punnets: 107,
-    sourcingCost: 3600,
-    sourcingCostPerPunnet: 33.64,
-    productionCosts: {
-      Labour: 856,
-      Electricity: 374.5,
-      "Packaging Materials": 1284,
-      "Delivery/Transport": 535,
-      "Quality Control": 214,
-    },
-    totalProductionCost: 3263.5,
-    totalCOGS: 6863.5,
-    unitCostPerPunnet: 64.14,
-    sellingPricePerPunnet: 150,
-    contributionMargin: 85.86,
-    contributionMarginPercent: 57.24,
-    hasOverride: false,
-  },
-  {
-    po: "PO-20260427-003",
-    product: "Mrenda",
-    punnets: 92,
-    sourcingCost: 5000,
-    sourcingCostPerPunnet: 54.35,
-    productionCosts: {
-      Labour: 736,
-      Electricity: 322,
-      "Packaging Materials": 1104,
-      "Delivery/Transport": 460,
-      "Quality Control": 184,
-    },
-    totalProductionCost: 2806,
-    totalCOGS: 7806,
-    unitCostPerPunnet: 84.85,
-    sellingPricePerPunnet: 180,
-    contributionMargin: 95.15,
-    contributionMarginPercent: 52.86,
-    hasOverride: false,
-  },
-  {
-    po: "PO-20260427-003",
-    product: "Sukuma",
-    punnets: 142,
-    sourcingCost: 4000,
-    sourcingCostPerPunnet: 28.17,
-    productionCosts: {
-      Labour: 1136,
-      Electricity: 497,
-      "Packaging Materials": 1704,
-      "Delivery/Transport": 710,
-      "Quality Control": 284,
-    },
-    totalProductionCost: 4331,
-    totalCOGS: 8331,
-    unitCostPerPunnet: 58.67,
-    sellingPricePerPunnet: 100,
-    contributionMargin: 41.33,
-    contributionMarginPercent: 41.33,
-    hasOverride: true,
-  },
-];
+const costCatalogue = costsData.costCatalogue;
+const batchCosts = costsData.batchCosts;
 
 export default function CostsPage() {
   const [isAddCostOpen, setIsAddCostOpen] = useState(false);
@@ -202,7 +82,9 @@ export default function CostsPage() {
                   <p className="text-2xl font-semibold text-foreground">
                     {costCatalogue.filter((c) => c.active).length}
                   </p>
-                  <p className="text-sm text-muted-foreground">Active Cost Types</p>
+                  <p className="text-sm text-muted-foreground">
+                    Active Cost Types
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -265,7 +147,10 @@ export default function CostsPage() {
                         placeholder="e.g., Maintenance"
                         value={newCostType.name}
                         onChange={(e) =>
-                          setNewCostType({ ...newCostType, name: e.target.value })
+                          setNewCostType({
+                            ...newCostType,
+                            name: e.target.value,
+                          })
                         }
                         className="bg-input border-border"
                       />
@@ -431,8 +316,8 @@ export default function CostsPage() {
                           batch.contributionMarginPercent > 50
                             ? "text-emerald"
                             : batch.contributionMarginPercent > 30
-                            ? "text-amber"
-                            : "text-crimson"
+                              ? "text-amber"
+                              : "text-crimson"
                         }`}
                       >
                         {batch.contributionMarginPercent.toFixed(1)}% margin
@@ -500,12 +385,14 @@ export default function CostsPage() {
                             key={type}
                             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 text-sm"
                           >
-                            <span className="text-muted-foreground">{type}:</span>
+                            <span className="text-muted-foreground">
+                              {type}:
+                            </span>
                             <span className="font-mono text-gold-link">
                               KES {amount.toLocaleString()}
                             </span>
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   </div>
@@ -573,8 +460,8 @@ export default function CostsPage() {
                               batch.contributionMarginPercent > 50
                                 ? "text-emerald"
                                 : batch.contributionMarginPercent > 30
-                                ? "text-amber"
-                                : "text-crimson"
+                                  ? "text-amber"
+                                  : "text-crimson"
                             }`}
                           >
                             {batch.contributionMarginPercent.toFixed(1)}%
