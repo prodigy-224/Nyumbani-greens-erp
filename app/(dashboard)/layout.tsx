@@ -101,7 +101,7 @@ export default function DashboardLayout({
 
   const handleLogout = () => {
     logout();
-    router.push("/login");
+    router.push('/login');
   };
 
   return (
@@ -115,7 +115,6 @@ export default function DashboardLayout({
               width={36}
               height={36}
               className="h-9 w-auto"
-              style={{ width: "auto" }}
             />
             <div className="flex flex-col group-data-[collapsible=icon]:hidden">
               <span className="text-sm font-semibold text-foreground">
@@ -178,10 +177,7 @@ export default function DashboardLayout({
                     Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={handleLogout}
-                    className="text-red-400 cursor-pointer"
-                  >
+                  <DropdownMenuItem onClick={handleLogout} className="text-red-400 cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
                     Log out
                   </DropdownMenuItem>
@@ -213,26 +209,20 @@ export default function DashboardLayout({
               <Bell className="h-4 w-4" />
               <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-crimson" />
             </Button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="sm" className="hidden md:inline-flex items-center gap-2 bg-background border border-border-subtle">
-                  Quick Actions
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => router.push('/sourcing?create=1')}>+ New PO</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push('/dashboard?sync=1')}>Sync Zoho</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push('/reports')}>Export</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              size="sm"
+              className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90"
+            >
+              + New PO
+            </Button>
           </div>
         </header>
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto">
-          <ProtectedRoute>{children}</ProtectedRoute>
+          <ProtectedRoute>
+            {children}
+          </ProtectedRoute>
         </main>
       </SidebarInset>
     </SidebarProvider>

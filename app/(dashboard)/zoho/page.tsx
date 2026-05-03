@@ -26,13 +26,151 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import zohoData from "@/data/zoho.json";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
-const syncStatus = zohoData.syncStatus;
-const stockIssues = zohoData.stockIssues;
-const syncLogs = zohoData.syncLogs;
-const unmatchedSKUs = zohoData.unmatchedSKUs;
+// Mock data
+const syncStatus = {
+  connected: true,
+  lastSync: "2026-04-28T14:30:00",
+  nextSync: "2026-04-28T15:30:00",
+  interval: 60,
+  recordsPulled: 45,
+  recordsMatched: 42,
+  unmatched: 3,
+};
+
+const stockIssues = [
+  {
+    id: "SI-001",
+    po: "PO-20260427-002",
+    product: "Spinach",
+    sku: "SPINACH-PO20260427-002",
+    punnetsIssued: 140,
+    issueDate: "2026-04-27T10:30:00",
+    pushStatus: "Success",
+    punnetsSold: 112,
+    punnetsUnsold: 28,
+  },
+  {
+    id: "SI-002",
+    po: "PO-20260427-003",
+    product: "Terere",
+    sku: "TERERE-PO20260427-003",
+    punnetsIssued: 80,
+    issueDate: "2026-04-27T11:00:00",
+    pushStatus: "Success",
+    punnetsSold: 65,
+    punnetsUnsold: 15,
+  },
+  {
+    id: "SI-003",
+    po: "PO-20260427-003",
+    product: "Mrenda",
+    sku: "MRENDA-PO20260427-003",
+    punnetsIssued: 70,
+    issueDate: "2026-04-27T11:15:00",
+    pushStatus: "Success",
+    punnetsSold: 55,
+    punnetsUnsold: 15,
+  },
+  {
+    id: "SI-004",
+    po: "PO-20260427-003",
+    product: "Sukuma",
+    sku: "SUKUMA-PO20260427-003",
+    punnetsIssued: 120,
+    issueDate: "2026-04-27T11:30:00",
+    pushStatus: "Success",
+    punnetsSold: 98,
+    punnetsUnsold: 22,
+  },
+  {
+    id: "SI-005",
+    po: "PO-20260426-001",
+    product: "Kunde",
+    sku: "KUNDE-PO20260426-001",
+    punnetsIssued: 100,
+    issueDate: "2026-04-26T09:00:00",
+    pushStatus: "Failed",
+    punnetsSold: 0,
+    punnetsUnsold: 100,
+  },
+];
+
+const syncLogs = [
+  {
+    timestamp: "2026-04-28T14:30:00",
+    trigger: "Auto",
+    recordsPulled: 12,
+    matched: 12,
+    unmatched: 0,
+    duplicates: 2,
+    errors: 0,
+    status: "Success",
+  },
+  {
+    timestamp: "2026-04-28T13:30:00",
+    trigger: "Auto",
+    recordsPulled: 8,
+    matched: 7,
+    unmatched: 1,
+    duplicates: 0,
+    errors: 0,
+    status: "Warning",
+  },
+  {
+    timestamp: "2026-04-28T12:30:00",
+    trigger: "Manual",
+    recordsPulled: 25,
+    matched: 23,
+    unmatched: 2,
+    duplicates: 3,
+    errors: 0,
+    status: "Warning",
+  },
+  {
+    timestamp: "2026-04-28T10:00:00",
+    trigger: "Auto",
+    recordsPulled: 0,
+    matched: 0,
+    unmatched: 0,
+    duplicates: 0,
+    errors: 1,
+    status: "Error",
+  },
+];
+
+const unmatchedSKUs = [
+  {
+    zohoOrderId: "ZO-2026042801",
+    sku: "KUNDE-LEGACY-001",
+    product: "Kunde",
+    quantity: 5,
+    revenue: 750,
+    orderDate: "2026-04-28T09:15:00",
+  },
+  {
+    zohoOrderId: "ZO-2026042815",
+    sku: "MANAGU-OLD",
+    product: "Managu",
+    quantity: 3,
+    revenue: 540,
+    orderDate: "2026-04-28T11:30:00",
+  },
+  {
+    zohoOrderId: "ZO-2026042822",
+    sku: "TERERE-TEST",
+    product: "Terere",
+    quantity: 2,
+    revenue: 300,
+    orderDate: "2026-04-28T14:00:00",
+  },
+];
 
 const statusColors: Record<string, string> = {
   Success: "bg-emerald/20 text-emerald border border-emerald/30",
@@ -108,13 +246,7 @@ export default function ZohoPage() {
                   <h3 className="text-lg font-medium text-foreground">
                     Zoho Inventory
                   </h3>
-                  <Badge
-                    className={
-                      syncStatus.connected
-                        ? statusColors.Success
-                        : statusColors.Error
-                    }
-                  >
+                  <Badge className={syncStatus.connected ? statusColors.Success : statusColors.Error}>
                     {syncStatus.connected ? "Connected" : "Disconnected"}
                   </Badge>
                 </div>
@@ -204,10 +336,10 @@ export default function ZohoPage() {
                       <th className="py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
                         Sold
                       </th>
-                      <th className="py-3 text-right pr-6 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      <th className="py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
                         Unsold
                       </th>
-                      <th className="py-3 text-left pl-4 text-xs font-medium uppercase tracking-wider text-muted-foreground min-w-[10rem]">
+                      <th className="py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                         Push Status
                       </th>
                       <th className="py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -247,10 +379,10 @@ export default function ZohoPage() {
                         <td className="py-3 text-right text-sm text-emerald">
                           {issue.punnetsSold}
                         </td>
-                        <td className="py-3 text-right text-sm text-amber pr-6">
+                        <td className="py-3 text-right text-sm text-amber">
                           {issue.punnetsUnsold}
                         </td>
-                        <td className="py-3 min-w-[10rem] whitespace-nowrap pl-4">
+                        <td className="py-3">
                           <Badge className={statusColors[issue.pushStatus]}>
                             {issue.pushStatus}
                           </Badge>
@@ -407,11 +539,7 @@ export default function ZohoPage() {
                             <span className="font-mono text-sm text-foreground">
                               {item.zohoOrderId}
                             </span>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6"
-                            >
+                            <Button variant="ghost" size="icon" className="h-6 w-6">
                               <ExternalLink className="h-3 w-3" />
                             </Button>
                           </div>
