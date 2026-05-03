@@ -30,9 +30,106 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import productionData from "@/data/production.json";
 
-const productionBatches = productionData.productionBatches;
+// Mock production data
+const productionBatches = [
+  {
+    id: "PO-20260428-001",
+    supplier: "Kiambu Farms",
+    status: "Processing",
+    stage: 2,
+    lineItems: [
+      {
+        product: "Kunde",
+        sourcedKg: 25,
+        receivedKg: 23.5,
+        variance: -6,
+        grade: "Good",
+        preProcessKg: 23.5,
+        postProcessKg: 21.2,
+        wastage: 9.8,
+        punnets: 0,
+        punnetWeight: 250,
+      },
+      {
+        product: "Managu",
+        sourcedKg: 20,
+        receivedKg: 19.8,
+        variance: -1,
+        grade: "Excellent",
+        preProcessKg: 19.8,
+        postProcessKg: 18.5,
+        wastage: 6.6,
+        punnets: 0,
+        punnetWeight: 250,
+      },
+    ],
+  },
+  {
+    id: "PO-20260427-003",
+    supplier: "Thika Greens",
+    status: "Packaging",
+    stage: 3,
+    lineItems: [
+      {
+        product: "Terere",
+        sourcedKg: 30,
+        receivedKg: 29.5,
+        variance: -1.7,
+        grade: "Good",
+        preProcessKg: 29.5,
+        postProcessKg: 26.8,
+        wastage: 9.2,
+        punnets: 107,
+        punnetWeight: 250,
+      },
+      {
+        product: "Mrenda",
+        sourcedKg: 25,
+        receivedKg: 24.8,
+        variance: -0.8,
+        grade: "Excellent",
+        preProcessKg: 24.8,
+        postProcessKg: 23.1,
+        wastage: 6.9,
+        punnets: 92,
+        punnetWeight: 250,
+      },
+      {
+        product: "Sukuma",
+        sourcedKg: 40,
+        receivedKg: 39.2,
+        variance: -2,
+        grade: "Good",
+        preProcessKg: 39.2,
+        postProcessKg: 35.5,
+        wastage: 9.4,
+        punnets: 142,
+        punnetWeight: 250,
+      },
+    ],
+  },
+  {
+    id: "PO-20260428-003",
+    supplier: "Meru Highlands",
+    status: "Intake",
+    stage: 0,
+    lineItems: [
+      {
+        product: "Managu",
+        sourcedKg: 40,
+        receivedKg: 0,
+        variance: 0,
+        grade: null,
+        preProcessKg: 0,
+        postProcessKg: 0,
+        wastage: 0,
+        punnets: 0,
+        punnetWeight: 250,
+      },
+    ],
+  },
+];
 
 const stages = [
   { name: "Intake", icon: Scale, description: "Verify received weight" },
@@ -48,16 +145,95 @@ const gradeColors: Record<string, string> = {
 };
 
 export default function ProductionPage() {
-  const [selectedBatch, setSelectedBatch] = useState<
-    (typeof productionBatches)[0] | null
-  >(null);
-  const [intakeData, setIntakeData] = useState<Record<string, number>>({});
-  const [gradeData, setGradeData] = useState<Record<string, string>>({});
+  const [batches, setBatches] = useState(productionBatches);
+  const [currentBatch, setCurrentBatch] = useState<typeof productionBatches[0] | null>(null);
+  
+  // State for each stage's form data per line item
+  const [intakeData, setIntakeData] = useState<{[key: string]: { receivedKg: number; variance: number }}>({});
+  const [gradeData, setGradeData] = useState<{[key: string]: string}>({});
+  const [processingData, setProcessingData] = useState<{[key: string]: { preProcessKg: number; postProcessKg: number; wastage: number; wastagePercent: number }}>({});
+  const [packagingData, setPackagingData] = useState<{[key: string]: { punnets: number; punnetWeight: number }}>({});
 
   const getStageStatus = (batchStage: number, stageIndex: number) => {
     if (stageIndex < batchStage) return "complete";
     if (stageIndex === batchStage) return "current";
     return "pending";
+  };
+
+  const handleOpenBatch = (batch: typeof productionBatches[0]) => {
+    // Load existing data from the batch into the form states
+    const newIntakeData: typeof intakeData = {};
+    const newGradeData: typeof gradeData = {};
+    const newProcessingData: typeof processingData = {};
+    const newPackagingData: typeof packagingData = {};
+
+    batch.lineItems.forEach((item) => {
+      const key = `${batch.id}-${item.product}`;
+      newIntakeData[key] = {
+        receivedKg: item.receivedKg,
+        variance: item.variance,
+      };
+      if (item.grade) newGradeData[key] = item.grade;
+      if (item.preProcessKg) {
+        newProcessingData[key] = {
+          preProcessKg: item.preProcessKg,
+          postProcessKg: item.postProcessKg,
+          wastage: item.preProcessKg - item.postProcessKg,
+          wastagePercent: ((item.preProcessKg - item.postProcessKg) / item.preProcessKg) * 100,
+        };
+      }
+      if (item.punnets) {
+        newPackagingData[key] = {
+          punnets: item.punnets,
+          punnetWeight: item.punnetWeight,
+        };
+      }
+    });
+
+    setIntakeData(newIntakeData);
+    setGradeData(newGradeData);
+    setProcessingData(newProcessingData);
+    setPackagingData(newPackagingData);
+    setCurrentBatch(JSON.parse(JSON.stringify(batch)));
+  };
+
+  const handleCompleteStage = () => {
+    if (!currentBatch) return;
+
+    // Merge all entered data into the batch
+    const updatedLineItems = currentBatch.lineItems.map((item) => {
+      const key = `${currentBatch.id}-${item.product}`;
+      return {
+        ...item,
+        receivedKg: intakeData[key]?.receivedKg ?? item.receivedKg,
+        variance: intakeData[key]?.variance ?? item.variance,
+        grade: gradeData[key] ?? item.grade,
+        preProcessKg: processingData[key]?.preProcessKg ?? item.preProcessKg,
+        postProcessKg: processingData[key]?.postProcessKg ?? item.postProcessKg,
+        wastage: processingData[key]?.wastagePercent ?? item.wastage,
+        punnets: packagingData[key]?.punnets ?? item.punnets,
+        punnetWeight: packagingData[key]?.punnetWeight ?? item.punnetWeight,
+      };
+    });
+
+    // Create updated batch and advance stage
+    const updatedBatch = {
+      ...currentBatch,
+      lineItems: updatedLineItems,
+      stage: Math.min(currentBatch.stage + 1, 3), // Max stage is 3
+    };
+
+    // Update batches list
+    setBatches(
+      batches.map((b) => (b.id === updatedBatch.id ? updatedBatch : b))
+    );
+
+    // Close modal
+    setCurrentBatch(null);
+  };
+
+  const getLineItemKey = (lineItem: string) => {
+    return currentBatch ? `${currentBatch.id}-${lineItem}` : '';
   };
 
   return (
@@ -73,7 +249,7 @@ export default function ProductionPage() {
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="text-amber border-amber/30">
             <Clock className="mr-1 h-3 w-3" />
-            {productionBatches.length} batches in production
+            {batches.length} batches in production
           </Badge>
         </div>
       </div>
@@ -128,11 +304,11 @@ export default function ProductionPage() {
 
       {/* Production Queue */}
       <div className="space-y-4">
-        {productionBatches.map((batch) => (
+        {batches.map((batch) => (
           <Card
             key={batch.id}
             className="border-border bg-card hover:border-green-border transition-colors cursor-pointer"
-            onClick={() => setSelectedBatch(batch)}
+            onClick={() => handleOpenBatch(batch)}
           >
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-4">
@@ -166,8 +342,8 @@ export default function ProductionPage() {
                           status === "complete"
                             ? "bg-emerald text-white"
                             : status === "current"
-                              ? "bg-amber text-white animate-pulse"
-                              : "bg-muted text-muted-foreground"
+                            ? "bg-amber text-white animate-pulse"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {status === "complete" ? (
@@ -208,9 +384,7 @@ export default function ProductionPage() {
                     <div className="space-y-1 text-xs text-muted-foreground">
                       <div className="flex justify-between">
                         <span>Sourced:</span>
-                        <span className="text-foreground">
-                          {item.sourcedKg} kg
-                        </span>
+                        <span className="text-foreground">{item.sourcedKg} kg</span>
                       </div>
                       {item.receivedKg > 0 && (
                         <>
@@ -237,9 +411,7 @@ export default function ProductionPage() {
                               <span>Wastage:</span>
                               <span
                                 className={
-                                  item.wastage > 10
-                                    ? "text-amber"
-                                    : "text-emerald"
+                                  item.wastage > 10 ? "text-amber" : "text-emerald"
                                 }
                               >
                                 {item.wastage.toFixed(1)}%
@@ -266,21 +438,18 @@ export default function ProductionPage() {
       </div>
 
       {/* Batch Detail Modal */}
-      {selectedBatch && (
-        <Dialog
-          open={!!selectedBatch}
-          onOpenChange={() => setSelectedBatch(null)}
-        >
+      {currentBatch && (
+        <Dialog open={!!currentBatch} onOpenChange={() => setCurrentBatch(null)}>
           <DialogContent className="max-w-4xl bg-card border-border max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <div className="flex items-center gap-2">
                 <DialogTitle className="font-mono text-green-link">
-                  {selectedBatch.id}
+                  {currentBatch.id}
                 </DialogTitle>
-                <Badge variant="outline">{selectedBatch.status}</Badge>
+                <Badge variant="outline">{stages[currentBatch.stage].name}</Badge>
               </div>
               <p className="text-sm text-muted-foreground">
-                {selectedBatch.supplier}
+                {currentBatch.supplier}
               </p>
             </DialogHeader>
 
@@ -288,28 +457,23 @@ export default function ProductionPage() {
               {/* Stage Progress */}
               <div className="flex items-center justify-between p-4 rounded-lg bg-background border border-border">
                 {stages.map((stage, index) => {
-                  const status = getStageStatus(selectedBatch.stage, index);
+                  const status = getStageStatus(currentBatch.stage, index);
                   return (
-                    <div
-                      key={stage.name}
-                      className="flex flex-col items-center flex-1"
-                    >
+                    <div key={stage.name} className="flex flex-col items-center flex-1">
                       <div
                         className={`flex items-center justify-center h-12 w-12 rounded-full mb-2 ${
                           status === "complete"
                             ? "bg-emerald text-white"
                             : status === "current"
-                              ? "bg-amber text-white"
-                              : "bg-muted text-muted-foreground"
+                            ? "bg-amber text-white"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
                         <stage.icon className="h-5 w-5" />
                       </div>
                       <span
                         className={`text-sm font-medium ${
-                          status === "current"
-                            ? "text-amber"
-                            : "text-foreground"
+                          status === "current" ? "text-amber" : "text-foreground"
                         }`}
                       >
                         {stage.name}
@@ -327,210 +491,353 @@ export default function ProductionPage() {
                 <h3 className="text-sm font-medium text-foreground">
                   Line Items
                 </h3>
-                {selectedBatch.lineItems.map((item, index) => (
-                  <div
-                    key={item.product}
-                    className="rounded-lg border border-border bg-background p-4"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg font-medium text-foreground">
-                          {item.product}
-                        </span>
-                        {item.grade && (
-                          <Badge className={gradeColors[item.grade]}>
-                            {item.grade}
+                {currentBatch.lineItems.map((item, index) => {
+                  const key = getLineItemKey(item.product);
+                  const currentIntake = intakeData[key];
+                  const currentGrade = gradeData[key];
+                  const currentProcessing = processingData[key];
+                  const currentPackaging = packagingData[key];
+
+                  return (
+                    <div
+                      key={item.product}
+                      className="rounded-lg border border-border bg-background p-4"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-medium text-foreground">
+                            {item.product}
+                          </span>
+                          {currentBatch.stage > 1 && item.grade && (
+                            <Badge className={gradeColors[item.grade]}>
+                              {item.grade}
+                            </Badge>
+                          )}
+                        </div>
+                        {currentIntake && Math.abs(currentIntake.variance) > 5 && (
+                          <Badge className="bg-crimson/20 text-crimson border border-crimson/30">
+                            <AlertTriangle className="mr-1 h-3 w-3" />
+                            High Variance
                           </Badge>
                         )}
                       </div>
-                      {Math.abs(item.variance) > 5 && (
-                        <Badge className="bg-crimson/20 text-crimson border border-crimson/30">
-                          <AlertTriangle className="mr-1 h-3 w-3" />
-                          High Variance
-                        </Badge>
-                      )}
-                    </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {/* Intake */}
-                      <div className="space-y-2">
-                        <label className="text-xs text-muted-foreground uppercase tracking-wider">
-                          Sourced Weight
-                        </label>
-                        <p className="text-lg font-semibold text-foreground">
-                          {item.sourcedKg} kg
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-xs text-muted-foreground uppercase tracking-wider">
-                          Received Weight
-                        </label>
-                        {selectedBatch.stage === 0 ? (
-                          <Input
-                            type="number"
-                            placeholder="Enter weight"
-                            className="bg-input border-border"
-                            value={
-                              intakeData[
-                                `${selectedBatch.id}-${item.product}`
-                              ] || ""
-                            }
-                            onChange={(e) =>
-                              setIntakeData({
-                                ...intakeData,
-                                [`${selectedBatch.id}-${item.product}`]:
-                                  parseFloat(e.target.value),
-                              })
-                            }
-                          />
-                        ) : (
-                          <p
-                            className={`text-lg font-semibold ${
-                              Math.abs(item.variance) > 5
-                                ? "text-crimson"
-                                : "text-foreground"
-                            }`}
-                          >
-                            {item.receivedKg} kg
-                            <span className="text-sm ml-1">
-                              ({item.variance > 0 ? "+" : ""}
-                              {item.variance.toFixed(1)}%)
-                            </span>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {/* INTAKE STAGE */}
+                        <div className="space-y-2">
+                          <label className="text-xs text-muted-foreground uppercase tracking-wider">
+                            Sourced Weight
+                          </label>
+                          <p className="text-lg font-semibold text-foreground">
+                            {item.sourcedKg} kg
                           </p>
-                        )}
-                      </div>
+                        </div>
 
-                      {/* Grading */}
-                      <div className="space-y-2">
-                        <label className="text-xs text-muted-foreground uppercase tracking-wider">
-                          Grade
-                        </label>
-                        {selectedBatch.stage === 1 ? (
-                          <Select
-                            value={
-                              gradeData[
-                                `${selectedBatch.id}-${item.product}`
-                              ] || ""
-                            }
-                            onValueChange={(value) =>
-                              setGradeData({
-                                ...gradeData,
-                                [`${selectedBatch.id}-${item.product}`]: value,
-                              })
-                            }
-                          >
-                            <SelectTrigger className="bg-input border-border">
-                              <SelectValue placeholder="Select grade" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Excellent">
-                                Excellent
-                              </SelectItem>
-                              <SelectItem value="Good">Good</SelectItem>
-                              <SelectItem value="Bad">Bad</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        ) : item.grade ? (
-                          <Badge className={gradeColors[item.grade]}>
-                            {item.grade}
-                          </Badge>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </div>
-
-                      {/* Processing */}
-                      <div className="space-y-2">
-                        <label className="text-xs text-muted-foreground uppercase tracking-wider">
-                          Wastage
-                        </label>
-                        {item.postProcessKg > 0 ? (
-                          <p
-                            className={`text-lg font-semibold ${
-                              item.wastage > 10 ? "text-amber" : "text-emerald"
-                            }`}
-                          >
-                            {item.wastage.toFixed(1)}%
-                          </p>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Processing Details */}
-                    {item.preProcessKg > 0 && (
-                      <div className="mt-4 pt-4 border-t border-border">
-                        <div className="grid grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <span className="text-muted-foreground">
-                              Pre-process:
-                            </span>
-                            <span className="ml-2 text-foreground">
-                              {item.preProcessKg} kg
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">
-                              Post-process:
-                            </span>
-                            <span className="ml-2 text-foreground">
-                              {item.postProcessKg} kg
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">Lost:</span>
-                            <span className="ml-2 text-amber">
-                              {(item.preProcessKg - item.postProcessKg).toFixed(
-                                1,
-                              )}{" "}
-                              kg
-                            </span>
-                          </div>
-                          {item.punnets > 0 && (
-                            <div>
-                              <span className="text-muted-foreground">
-                                Packed:
-                              </span>
-                              <span className="ml-2 text-gold-link font-medium">
-                                {item.punnets} punnets
-                              </span>
+                        <div className="space-y-2">
+                          <label className="text-xs text-muted-foreground uppercase tracking-wider">
+                            Received Weight
+                          </label>
+                          {currentBatch.stage === 0 ? (
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  type="number"
+                                  step="0.1"
+                                  placeholder="0.0"
+                                  className="bg-input border-border text-right flex-1"
+                                  value={currentIntake?.receivedKg ?? ""}
+                                  onChange={(e) => {
+                                    const receivedKg = parseFloat(e.target.value) || 0;
+                                    const variance = ((receivedKg - item.sourcedKg) / item.sourcedKg) * 100;
+                                    setIntakeData({
+                                      ...intakeData,
+                                      [key]: { receivedKg, variance: parseFloat(variance.toFixed(1)) },
+                                    });
+                                  }}
+                                />
+                                <span className="text-sm text-muted-foreground">kg</span>
+                              </div>
+                              {currentIntake && (
+                                <p className={`text-xs font-medium ${
+                                  Math.abs(currentIntake.variance) > 5 ? "text-crimson" : "text-emerald"
+                                }`}>
+                                  {currentIntake.variance > 0 ? "+" : ""}{currentIntake.variance.toFixed(1)}%
+                                </p>
+                              )}
                             </div>
+                          ) : (
+                            <p
+                              className={`text-lg font-semibold ${
+                                currentIntake && Math.abs(currentIntake.variance) > 5
+                                  ? "text-crimson"
+                                  : "text-foreground"
+                              }`}
+                            >
+                              {currentIntake?.receivedKg ?? item.receivedKg} kg
+                              {currentIntake && currentIntake.variance !== 0 && (
+                                <span className="text-sm ml-1">
+                                  ({currentIntake.variance > 0 ? "+" : ""}
+                                  {currentIntake.variance.toFixed(1)}%)
+                                </span>
+                              )}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* GRADING STAGE */}
+                        <div className="space-y-2">
+                          <label className="text-xs text-muted-foreground uppercase tracking-wider">
+                            Grade
+                          </label>
+                          {currentBatch.stage === 1 ? (
+                            <div className="flex gap-2">
+                              {["Bad", "Good", "Excellent"].map((grade) => (
+                                <button
+                                  key={grade}
+                                  onClick={() =>
+                                    setGradeData({
+                                      ...gradeData,
+                                      [key]: grade,
+                                    })
+                                  }
+                                  className={`flex-1 px-2 py-2 text-xs font-medium rounded transition-all ${
+                                    currentGrade === grade
+                                      ? gradeColors[grade]
+                                      : "bg-muted text-muted-foreground hover:bg-muted/70 active:scale-95"
+                                  }`}
+                                >
+                                  {grade}
+                                </button>
+                              ))}
+                            </div>
+                          ) : (
+                            <>
+                              {currentGrade ? (
+                                <Badge className={gradeColors[currentGrade]}>
+                                  {currentGrade}
+                                </Badge>
+                              ) : item.grade ? (
+                                <Badge className={gradeColors[item.grade]}>
+                                  {item.grade}
+                                </Badge>
+                              ) : (
+                                <span className="text-muted-foreground">—</span>
+                              )}
+                            </>
+                          )}
+                        </div>
+
+                        {/* PROCESSING STAGE */}
+                        <div className="space-y-2">
+                          <label className="text-xs text-muted-foreground uppercase tracking-wider">
+                            Wastage
+                          </label>
+                          {currentBatch.stage === 2 ? (
+                            <div className="text-sm font-medium text-amber">
+                              {currentProcessing ? `${currentProcessing.wastagePercent.toFixed(1)}%` : "—"}
+                            </div>
+                          ) : (
+                            <p
+                              className={`text-lg font-semibold ${
+                                currentProcessing && currentProcessing.wastagePercent > 10
+                                  ? "text-amber"
+                                  : "text-emerald"
+                              }`}
+                            >
+                              {currentProcessing?.wastagePercent.toFixed(1) ?? item.wastage.toFixed(1)}%
+                            </p>
                           )}
                         </div>
                       </div>
-                    )}
-                  </div>
-                ))}
+
+                      {/* PROCESSING DETAILS */}
+                      {currentBatch.stage >= 2 && (
+                        <div className="mt-4 pt-4 border-t border-border">
+                          {currentBatch.stage === 2 ? (
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-xs text-muted-foreground uppercase tracking-wider">
+                                  Pre-process kg
+                                </label>
+                                <div className="flex items-center gap-2">
+                                  <Input
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="0.0"
+                                    className="bg-input border-border text-right flex-1"
+                                    value={currentProcessing?.preProcessKg ?? ""}
+                                    onChange={(e) => {
+                                      const preProcessKg = parseFloat(e.target.value) || 0;
+                                      const postProcessKg = currentProcessing?.postProcessKg ?? 0;
+                                      const wastage = preProcessKg - postProcessKg;
+                                      const wastagePercent = preProcessKg > 0 ? (wastage / preProcessKg) * 100 : 0;
+                                      setProcessingData({
+                                        ...processingData,
+                                        [key]: {
+                                          preProcessKg,
+                                          postProcessKg,
+                                          wastage: parseFloat(wastage.toFixed(1)),
+                                          wastagePercent: parseFloat(wastagePercent.toFixed(1)),
+                                        },
+                                      });
+                                    }}
+                                  />
+                                  <span className="text-sm text-muted-foreground">kg</span>
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-xs text-muted-foreground uppercase tracking-wider">
+                                  Post-process kg
+                                </label>
+                                <div className="flex items-center gap-2">
+                                  <Input
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="0.0"
+                                    className="bg-input border-border text-right flex-1"
+                                    value={currentProcessing?.postProcessKg ?? ""}
+                                    onChange={(e) => {
+                                      const postProcessKg = parseFloat(e.target.value) || 0;
+                                      const preProcessKg = currentProcessing?.preProcessKg ?? 0;
+                                      const wastage = preProcessKg - postProcessKg;
+                                      const wastagePercent = preProcessKg > 0 ? (wastage / preProcessKg) * 100 : 0;
+                                      setProcessingData({
+                                        ...processingData,
+                                        [key]: {
+                                          preProcessKg,
+                                          postProcessKg,
+                                          wastage: parseFloat(wastage.toFixed(1)),
+                                          wastagePercent: parseFloat(wastagePercent.toFixed(1)),
+                                        },
+                                      });
+                                    }}
+                                  />
+                                  <span className="text-sm text-muted-foreground">kg</span>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-4 gap-4 text-sm">
+                              <div>
+                                <span className="text-muted-foreground">Pre-process:</span>
+                                <span className="ml-2 text-foreground font-medium">
+                                  {currentProcessing?.preProcessKg ?? item.preProcessKg} kg
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Post-process:</span>
+                                <span className="ml-2 text-foreground font-medium">
+                                  {currentProcessing?.postProcessKg ?? item.postProcessKg} kg
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Lost:</span>
+                                <span className="ml-2 text-amber font-medium">
+                                  {currentProcessing?.wastage ?? (item.preProcessKg - item.postProcessKg).toFixed(1)} kg
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* PACKAGING DETAILS */}
+                      {currentBatch.stage >= 3 && (
+                        <div className="mt-4 pt-4 border-t border-border">
+                          {currentBatch.stage === 3 ? (
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-xs text-muted-foreground uppercase tracking-wider">
+                                  Punnet Count
+                                </label>
+                                <div className="flex items-center gap-2">
+                                  <Input
+                                    type="number"
+                                    step="1"
+                                    placeholder="0"
+                                    className="bg-input border-border text-right flex-1"
+                                    value={currentPackaging?.punnets ?? ""}
+                                    onChange={(e) =>
+                                      setPackagingData({
+                                        ...packagingData,
+                                        [key]: {
+                                          punnets: parseInt(e.target.value) || 0,
+                                          punnetWeight: currentPackaging?.punnetWeight ?? 250,
+                                        },
+                                      })
+                                    }
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-xs text-muted-foreground uppercase tracking-wider">
+                                  Standard Punnet Weight (g)
+                                </label>
+                                <div className="flex items-center gap-2">
+                                  <Input
+                                    type="number"
+                                    step="10"
+                                    placeholder="250"
+                                    className="bg-input border-border text-right flex-1"
+                                    value={currentPackaging?.punnetWeight ?? item.punnetWeight}
+                                    onChange={(e) =>
+                                      setPackagingData({
+                                        ...packagingData,
+                                        [key]: {
+                                          punnets: currentPackaging?.punnets ?? 0,
+                                          punnetWeight: parseInt(e.target.value) || 250,
+                                        },
+                                      })
+                                    }
+                                  />
+                                  <span className="text-sm text-muted-foreground">g</span>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <span className="text-muted-foreground">Punnets:</span>
+                                <span className="ml-2 text-gold-link font-medium">
+                                  {currentPackaging?.punnets ?? item.punnets}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Punnet Weight:</span>
+                                <span className="ml-2 text-foreground font-medium">
+                                  {currentPackaging?.punnetWeight ?? item.punnetWeight}g
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Actions */}
               <div className="flex justify-end gap-2 pt-4 border-t border-border">
-                <Button
-                  variant="outline"
-                  onClick={() => setSelectedBatch(null)}
-                >
+                <Button variant="outline" onClick={() => setCurrentBatch(null)}>
                   Close
                 </Button>
-                {selectedBatch.stage === 0 && (
-                  <Button className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90">
-                    Complete Intake
+                {currentBatch.stage < 3 && (
+                  <Button 
+                    className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90 active:scale-95 transition-all"
+                    onClick={handleCompleteStage}
+                  >
+                    Complete {stages[currentBatch.stage].name}
                   </Button>
                 )}
-                {selectedBatch.stage === 1 && (
-                  <Button className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90">
-                    Complete Grading
-                  </Button>
-                )}
-                {selectedBatch.stage === 2 && (
-                  <Button className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90">
-                    Record Processing
-                  </Button>
-                )}
-                {selectedBatch.stage === 3 && (
-                  <Button className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90">
-                    Complete Packaging
+                {currentBatch.stage === 3 && (
+                  <Button 
+                    className="bg-emerald text-white hover:bg-emerald/90 active:scale-95 transition-all"
+                    disabled
+                  >
+                    Batch Complete
                   </Button>
                 )}
               </div>

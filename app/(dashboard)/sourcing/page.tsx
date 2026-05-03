@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import {
   Plus,
   Search,
@@ -41,9 +40,85 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import sourcingData from "@/data/sourcing.json";
 
-const productOrders = sourcingData.productOrders;
+// Mock data
+const productOrders = [
+  {
+    id: "PO-20260428-001",
+    supplier: "Kiambu Farms",
+    date: "2026-04-28",
+    status: "In Production",
+    lineItems: [
+      { product: "Kunde", kg: 25, pricePerKg: 150, total: 3750 },
+      { product: "Managu", kg: 20, pricePerKg: 180, total: 3600 },
+    ],
+    totalCost: 7350,
+    paymentStatus: "Paid",
+    location: "Kiambu County",
+  },
+  {
+    id: "PO-20260427-003",
+    supplier: "Thika Greens",
+    date: "2026-04-27",
+    status: "Packaging",
+    lineItems: [
+      { product: "Terere", kg: 30, pricePerKg: 120, total: 3600 },
+      { product: "Mrenda", kg: 25, pricePerKg: 200, total: 5000 },
+      { product: "Sukuma", kg: 40, pricePerKg: 100, total: 4000 },
+    ],
+    totalCost: 12600,
+    paymentStatus: "Paid",
+    location: "Thika Town",
+  },
+  {
+    id: "PO-20260427-002",
+    supplier: "Limuru Organics",
+    date: "2026-04-27",
+    status: "Ready for Sale",
+    lineItems: [{ product: "Spinach", kg: 35, pricePerKg: 250, total: 8750 }],
+    totalCost: 8750,
+    paymentStatus: "Paid",
+    location: "Limuru",
+  },
+  {
+    id: "PO-20260426-001",
+    supplier: "Kiambu Farms",
+    date: "2026-04-26",
+    status: "Closed",
+    lineItems: [
+      { product: "Kunde", kg: 30, pricePerKg: 150, total: 4500 },
+      { product: "Saga", kg: 25, pricePerKg: 220, total: 5500 },
+    ],
+    totalCost: 10000,
+    paymentStatus: "Paid",
+    location: "Kiambu County",
+  },
+  {
+    id: "PO-20260428-002",
+    supplier: "Naivasha Gardens",
+    date: "2026-04-28",
+    status: "Draft",
+    lineItems: [
+      { product: "Kale", kg: 50, pricePerKg: 80, total: 4000 },
+      { product: "Cabbage", kg: 30, pricePerKg: 60, total: 1800 },
+    ],
+    totalCost: 5800,
+    paymentStatus: "Pending",
+    location: "Naivasha",
+  },
+  {
+    id: "PO-20260428-003",
+    supplier: "Meru Highlands",
+    date: "2026-04-28",
+    status: "Confirmed",
+    lineItems: [
+      { product: "Managu", kg: 40, pricePerKg: 175, total: 7000 },
+    ],
+    totalCost: 7000,
+    paymentStatus: "Pending",
+    location: "Meru County",
+  },
+];
 
 const statusColors: Record<string, string> = {
   Draft: "bg-muted text-muted-foreground",
@@ -60,31 +135,12 @@ const paymentColors: Record<string, string> = {
   Pending: "bg-amber/20 text-amber border border-amber/30",
 };
 
-const products = Array.from(
-  new Set(
-    productOrders.flatMap((order) =>
-      order.lineItems.map((item) => item.product),
-    ),
-  ),
-);
+const products = ["Kunde", "Managu", "Terere", "Mrenda", "Sukuma", "Spinach", "Saga", "Kale", "Cabbage"];
 
 export default function SourcingPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    try {
-      const create = searchParams?.get("create");
-      if (create === "1" || create === "true") {
-        setIsCreateOpen(true);
-      }
-    } catch (e) {
-      // no-op
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   const [selectedPO, setSelectedPO] = useState<typeof productOrders[0] | null>(null);
   const [createdPOs, setCreatedPOs] = useState<typeof productOrders>([]);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -127,23 +183,15 @@ export default function SourcingPage() {
     });
   };
 
-  const updateLineItem = (
-    index: number,
-    field: string,
-    value: string | number,
-  ) => {
+  const updateLineItem = (index: number, field: string, value: string | number) => {
     const updated = [...newPO.lineItems];
     updated[index] = { ...updated[index], [field]: value };
     setNewPO({ ...newPO, lineItems: updated });
   };
 
-  const calculateLineTotal = (kg: number, pricePerKg: number) =>
-    kg * pricePerKg;
+  const calculateLineTotal = (kg: number, pricePerKg: number) => kg * pricePerKg;
   const calculatePOTotal = () =>
-    newPO.lineItems.reduce(
-      (sum, item) => sum + calculateLineTotal(item.kg, item.pricePerKg),
-      0,
-    );
+    newPO.lineItems.reduce((sum, item) => sum + calculateLineTotal(item.kg, item.pricePerKg), 0);
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
@@ -259,9 +307,7 @@ export default function SourcingPage() {
                   <Input
                     placeholder="Enter supplier name"
                     value={newPO.supplier}
-                    onChange={(e) =>
-                      setNewPO({ ...newPO, supplier: e.target.value })
-                    }
+                    onChange={(e) => setNewPO({ ...newPO, supplier: e.target.value })}
                     className="bg-input border-border"
                   />
                 </div>
@@ -272,9 +318,7 @@ export default function SourcingPage() {
                   <Input
                     placeholder="Sourcing location"
                     value={newPO.location}
-                    onChange={(e) =>
-                      setNewPO({ ...newPO, location: e.target.value })
-                    }
+                    onChange={(e) => setNewPO({ ...newPO, location: e.target.value })}
                     className="bg-input border-border"
                   />
                 </div>
@@ -291,7 +335,7 @@ export default function SourcingPage() {
                     Add Product
                   </Button>
                 </div>
-
+                
                 <div className="space-y-2">
                   {newPO.lineItems.map((item, index) => (
                     <div
@@ -300,9 +344,7 @@ export default function SourcingPage() {
                     >
                       <Select
                         value={item.product}
-                        onValueChange={(value) =>
-                          updateLineItem(index, "product", value)
-                        }
+                        onValueChange={(value) => updateLineItem(index, "product", value)}
                       >
                         <SelectTrigger className="w-40 bg-input border-border">
                           <SelectValue placeholder="Product" />
@@ -320,18 +362,10 @@ export default function SourcingPage() {
                           type="number"
                           placeholder="0"
                           value={item.kg || ""}
-                          onChange={(e) =>
-                            updateLineItem(
-                              index,
-                              "kg",
-                              parseFloat(e.target.value) || 0,
-                            )
-                          }
+                          onChange={(e) => updateLineItem(index, "kg", parseFloat(e.target.value) || 0)}
                           className="w-20 bg-input border-border"
                         />
-                        <span className="text-sm text-muted-foreground">
-                          kg
-                        </span>
+                        <span className="text-sm text-muted-foreground">kg</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="text-sm text-muted-foreground">@</span>
@@ -339,26 +373,14 @@ export default function SourcingPage() {
                           type="number"
                           placeholder="0"
                           value={item.pricePerKg || ""}
-                          onChange={(e) =>
-                            updateLineItem(
-                              index,
-                              "pricePerKg",
-                              parseFloat(e.target.value) || 0,
-                            )
-                          }
+                          onChange={(e) => updateLineItem(index, "pricePerKg", parseFloat(e.target.value) || 0)}
                           className="w-24 bg-input border-border"
                         />
-                        <span className="text-sm text-muted-foreground">
-                          /kg
-                        </span>
+                        <span className="text-sm text-muted-foreground">/kg</span>
                       </div>
                       <div className="flex-1 text-right">
                         <span className="font-mono text-sm text-gold-link">
-                          KES{" "}
-                          {calculateLineTotal(
-                            item.kg,
-                            item.pricePerKg,
-                          ).toLocaleString()}
+                          KES {calculateLineTotal(item.kg, item.pricePerKg).toLocaleString()}
                         </span>
                       </div>
                       {newPO.lineItems.length > 1 && (
@@ -425,9 +447,7 @@ export default function SourcingPage() {
               <Package className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
-              <p className="text-2xl font-semibold text-foreground">
-                {stats.total}
-              </p>
+              <p className="text-2xl font-semibold text-foreground">{stats.total}</p>
               <p className="text-sm text-muted-foreground">Total POs</p>
             </div>
           </CardContent>
@@ -438,9 +458,7 @@ export default function SourcingPage() {
               <Clock className="h-5 w-5 text-violet" />
             </div>
             <div>
-              <p className="text-2xl font-semibold text-foreground">
-                {stats.draft}
-              </p>
+              <p className="text-2xl font-semibold text-foreground">{stats.draft}</p>
               <p className="text-sm text-muted-foreground">Drafts</p>
             </div>
           </CardContent>
@@ -451,9 +469,7 @@ export default function SourcingPage() {
               <CheckCircle2 className="h-5 w-5 text-emerald" />
             </div>
             <div>
-              <p className="text-2xl font-semibold text-foreground">
-                {stats.active}
-              </p>
+              <p className="text-2xl font-semibold text-foreground">{stats.active}</p>
               <p className="text-sm text-muted-foreground">Active</p>
             </div>
           </CardContent>
@@ -589,15 +605,8 @@ export default function SourcingPage() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <DropdownMenu>
-                        <DropdownMenuTrigger
-                          asChild
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                          >
+                        <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -711,10 +720,7 @@ export default function SourcingPage() {
                     </tbody>
                     <tfoot className="bg-muted/30">
                       <tr>
-                        <td
-                          colSpan={3}
-                          className="px-3 py-2 text-sm font-medium text-foreground"
-                        >
+                        <td colSpan={3} className="px-3 py-2 text-sm font-medium text-foreground">
                           Total
                         </td>
                         <td className="px-3 py-2 text-right font-mono text-sm font-semibold text-gold-link">
@@ -728,7 +734,9 @@ export default function SourcingPage() {
 
               {/* Actions */}
               <div className="flex justify-end gap-2 pt-4 border-t border-border">
-                <Button variant="outline">Edit PO</Button>
+                <Button variant="outline">
+                  Edit PO
+                </Button>
                 {selectedPO.paymentStatus === "Pending" && (
                   <Button variant="outline" className="text-amber">
                     Mark as Paid

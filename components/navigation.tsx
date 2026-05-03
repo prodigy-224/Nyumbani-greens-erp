@@ -1,9 +1,8 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Image from "next/image";
-import { Menu, X, Bell, ChevronDown } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useState } from "react"
+import Image from "next/image"
+import { Menu, X, Bell, ChevronDown } from "lucide-react"
 
 const navItems = [
   { name: "Sourcing", href: "#sourcing" },
@@ -12,12 +11,10 @@ const navItems = [
   { name: "Zoho Integration", href: "#zoho" },
   { name: "Costs", href: "#costs" },
   { name: "Dashboard", href: "#dashboard" },
-];
+]
 
 export function Navigation() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [quickOpen, setQuickOpen] = useState(false);
-  const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -30,11 +27,8 @@ export function Navigation() {
             width={32}
             height={32}
             className="h-8 w-auto"
-            style={{ width: "auto" }}
           />
-          <span className="text-lg font-medium text-text-primary">
-            Nyumbani Greens
-          </span>
+          <span className="text-lg font-medium text-text-primary">Nyumbani Greens</span>
         </a>
 
         {/* Desktop Nav */}
@@ -52,47 +46,10 @@ export function Navigation() {
 
         {/* Right side */}
         <div className="flex items-center gap-4">
-          {/* Quick Actions Dropdown - Desktop */}
-          <div className="relative">
-            <button
-              onClick={() => setQuickOpen(!quickOpen)}
-              className="hidden lg:flex items-center gap-2 rounded-full border border-border-subtle bg-background/50 px-4 py-2 text-sm font-medium text-text-muted hover:bg-background"
-            >
-              Quick Actions
-              <ChevronDown className="h-4 w-4" />
-            </button>
-            {quickOpen && (
-              <div className="absolute right-0 mt-2 w-44 z-50 rounded-lg border border-border bg-card p-1">
-                <button
-                  onClick={() => {
-                    setQuickOpen(false);
-                    router.push("/sourcing?create=1");
-                  }}
-                  className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-900 rounded"
-                >
-                  + New PO
-                </button>
-                <button
-                  onClick={() => {
-                    setQuickOpen(false);
-                    router.push("/dashboard?sync=1");
-                  }}
-                  className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-900 rounded"
-                >
-                  Sync Zoho
-                </button>
-                <button
-                  onClick={() => {
-                    setQuickOpen(false);
-                    router.push("/reports");
-                  }}
-                  className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-900 rounded"
-                >
-                  Export
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Create PO Button - Desktop */}
+          <button className="hidden rounded-full border border-green-border bg-[rgba(45,138,62,0.15)] px-6 py-2 text-sm font-medium text-green-link transition-colors hover:bg-[rgba(45,138,62,0.25)] lg:block">
+            Create Product Order
+          </button>
 
           {/* Notification Bell */}
           <button className="relative rounded-md p-2 text-text-muted transition-colors hover:bg-secondary hover:text-text-primary">
@@ -112,11 +69,7 @@ export function Navigation() {
             className="rounded-md p-2 text-text-muted lg:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </nav>
@@ -135,15 +88,12 @@ export function Navigation() {
                 {item.name}
               </a>
             ))}
-            <button
-              className="mt-4 w-full rounded-full border border-green-border bg-[rgba(45,138,62,0.15)] px-6 py-3 text-sm font-medium text-green-link"
-              onClick={() => router.push("/sourcing?create=1")}
-            >
+            <button className="mt-4 w-full rounded-full border border-green-border bg-[rgba(45,138,62,0.15)] px-6 py-3 text-sm font-medium text-green-link">
               Create Product Order
             </button>
           </div>
         </div>
       )}
     </header>
-  );
+  )
 }

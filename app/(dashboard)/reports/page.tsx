@@ -21,13 +21,132 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import reportsData from "@/data/reports.json";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
-const batchComparison = reportsData.batchComparison;
-const productTrends = reportsData.productTrends;
-const financialSummary = reportsData.financialSummary;
-const kpis = reportsData.kpis;
+// Mock data for batch comparison
+const batchComparison = [
+  {
+    po: "PO-20260428-001",
+    date: "2026-04-28",
+    supplier: "Kiambu Farms",
+    sourcedKg: 45,
+    receivedKg: 43.3,
+    wastagePercent: 8.2,
+    packedPunnets: 159,
+    issuedToZoho: 0,
+    punnetsSold: 0,
+    shrinkagePercent: 0,
+    unitCostPerPunnet: 46.23,
+    revenue: 0,
+    cogs: 7350,
+    netMarginPercent: 0,
+  },
+  {
+    po: "PO-20260427-003",
+    date: "2026-04-27",
+    supplier: "Thika Greens",
+    sourcedKg: 95,
+    receivedKg: 93.5,
+    wastagePercent: 8.5,
+    packedPunnets: 341,
+    issuedToZoho: 270,
+    punnetsSold: 218,
+    shrinkagePercent: 2.1,
+    unitCostPerPunnet: 58.45,
+    revenue: 31284,
+    cogs: 12600,
+    netMarginPercent: 59.7,
+  },
+  {
+    po: "PO-20260427-002",
+    date: "2026-04-27",
+    supplier: "Limuru Organics",
+    sourcedKg: 35,
+    receivedKg: 34.2,
+    wastagePercent: 7.1,
+    packedPunnets: 140,
+    issuedToZoho: 140,
+    punnetsSold: 112,
+    shrinkagePercent: 3.6,
+    unitCostPerPunnet: 62.5,
+    revenue: 16800,
+    cogs: 8750,
+    netMarginPercent: 47.9,
+  },
+  {
+    po: "PO-20260426-001",
+    date: "2026-04-26",
+    supplier: "Kiambu Farms",
+    sourcedKg: 55,
+    receivedKg: 53.8,
+    wastagePercent: 9.3,
+    packedPunnets: 196,
+    issuedToZoho: 196,
+    punnetsSold: 185,
+    shrinkagePercent: 1.5,
+    unitCostPerPunnet: 51.02,
+    revenue: 27750,
+    cogs: 10000,
+    netMarginPercent: 64.0,
+  },
+];
+
+// Mock product trends
+const productTrends = {
+  Kunde: {
+    batches: [
+      { po: "PO-20260426-001", wastage: 9.1, shrinkage: 1.2, unitCost: 47.5, margin: 68.3 },
+      { po: "PO-20260424-002", wastage: 8.5, shrinkage: 2.1, unitCost: 49.2, margin: 67.2 },
+      { po: "PO-20260422-001", wastage: 10.2, shrinkage: 1.8, unitCost: 52.1, margin: 65.3 },
+      { po: "PO-20260420-003", wastage: 7.8, shrinkage: 1.5, unitCost: 45.8, margin: 69.5 },
+      { po: "PO-20260418-001", wastage: 9.5, shrinkage: 2.3, unitCost: 50.3, margin: 66.5 },
+    ],
+    avgWastage: 9.02,
+    avgShrinkage: 1.78,
+    avgUnitCost: 48.98,
+    avgMargin: 67.36,
+    trend: "stable",
+  },
+  Managu: {
+    batches: [
+      { po: "PO-20260428-001", wastage: 6.6, shrinkage: 0, unitCost: 58.2, margin: 61.2 },
+      { po: "PO-20260425-001", wastage: 7.2, shrinkage: 1.8, unitCost: 55.8, margin: 62.8 },
+      { po: "PO-20260423-002", wastage: 6.1, shrinkage: 1.2, unitCost: 54.2, margin: 63.9 },
+      { po: "PO-20260421-001", wastage: 7.8, shrinkage: 2.1, unitCost: 57.5, margin: 61.7 },
+      { po: "PO-20260419-003", wastage: 6.5, shrinkage: 1.5, unitCost: 53.8, margin: 64.1 },
+    ],
+    avgWastage: 6.84,
+    avgShrinkage: 1.32,
+    avgUnitCost: 55.9,
+    avgMargin: 62.74,
+    trend: "improving",
+  },
+};
+
+// Financial summary
+const financialSummary = {
+  totalSourcingSpend: 51500,
+  totalProductionCosts: 32450,
+  totalCOGS: 83950,
+  totalRevenue: 142350,
+  netProfit: 58400,
+  avgNetMargin: 41.0,
+  lastSyncTimestamp: "2026-04-28T14:30:00",
+};
+
+// KPIs
+const kpis = {
+  avgWastage: 8.4,
+  avgShrinkage: 2.1,
+  avgUnitCost: 54.32,
+  avgNetMargin: 58.2,
+  rollingWindow: 30,
+};
 
 export default function ReportsPage() {
   const [selectedProduct, setSelectedProduct] = useState("Kunde");
@@ -259,8 +378,8 @@ export default function ReportsPage() {
                               batch.wastagePercent > 10
                                 ? "text-crimson"
                                 : batch.wastagePercent > 8
-                                  ? "text-amber"
-                                  : "text-emerald"
+                                ? "text-amber"
+                                : "text-emerald"
                             }`}
                           >
                             {batch.wastagePercent}%
@@ -278,8 +397,8 @@ export default function ReportsPage() {
                               batch.shrinkagePercent > 3
                                 ? "text-crimson"
                                 : batch.shrinkagePercent > 2
-                                  ? "text-amber"
-                                  : "text-emerald"
+                                ? "text-amber"
+                                : "text-emerald"
                             }`}
                           >
                             {batch.shrinkagePercent}%
@@ -300,8 +419,8 @@ export default function ReportsPage() {
                                 batch.netMarginPercent > 50
                                   ? "text-emerald"
                                   : batch.netMarginPercent > 30
-                                    ? "text-amber"
-                                    : "text-crimson"
+                                  ? "text-amber"
+                                  : "text-crimson"
                               }`}
                             >
                               {batch.netMarginPercent}%
@@ -336,79 +455,47 @@ export default function ReportsPage() {
               </SelectContent>
             </Select>
             <Badge variant="outline">
-              Last{" "}
-              {productTrends[selectedProduct as keyof typeof productTrends]
-                ?.batches.length || 0}{" "}
-              batches
+              Last {productTrends[selectedProduct as keyof typeof productTrends]?.batches.length || 0} batches
             </Badge>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            {selectedProduct &&
-              productTrends[selectedProduct as keyof typeof productTrends] && (
-                <>
-                  <Card className="border-border bg-card">
-                    <CardContent className="p-4">
-                      <p className="text-sm text-muted-foreground">
-                        Avg Wastage
-                      </p>
-                      <p className="text-2xl font-semibold text-foreground">
-                        {
-                          productTrends[
-                            selectedProduct as keyof typeof productTrends
-                          ].avgWastage
-                        }
-                        %
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card className="border-border bg-card">
-                    <CardContent className="p-4">
-                      <p className="text-sm text-muted-foreground">
-                        Avg Shrinkage
-                      </p>
-                      <p className="text-2xl font-semibold text-foreground">
-                        {
-                          productTrends[
-                            selectedProduct as keyof typeof productTrends
-                          ].avgShrinkage
-                        }
-                        %
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card className="border-border bg-card">
-                    <CardContent className="p-4">
-                      <p className="text-sm text-muted-foreground">
-                        Avg Unit Cost
-                      </p>
-                      <p className="text-2xl font-semibold text-gold-link">
-                        KES{" "}
-                        {
-                          productTrends[
-                            selectedProduct as keyof typeof productTrends
-                          ].avgUnitCost
-                        }
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card className="border-border bg-card">
-                    <CardContent className="p-4">
-                      <p className="text-sm text-muted-foreground">
-                        Avg Margin
-                      </p>
-                      <p className="text-2xl font-semibold text-emerald">
-                        {
-                          productTrends[
-                            selectedProduct as keyof typeof productTrends
-                          ].avgMargin
-                        }
-                        %
-                      </p>
-                    </CardContent>
-                  </Card>
-                </>
-              )}
+            {selectedProduct && productTrends[selectedProduct as keyof typeof productTrends] && (
+              <>
+                <Card className="border-border bg-card">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-muted-foreground">Avg Wastage</p>
+                    <p className="text-2xl font-semibold text-foreground">
+                      {productTrends[selectedProduct as keyof typeof productTrends].avgWastage}%
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="border-border bg-card">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-muted-foreground">Avg Shrinkage</p>
+                    <p className="text-2xl font-semibold text-foreground">
+                      {productTrends[selectedProduct as keyof typeof productTrends].avgShrinkage}%
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="border-border bg-card">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-muted-foreground">Avg Unit Cost</p>
+                    <p className="text-2xl font-semibold text-gold-link">
+                      KES {productTrends[selectedProduct as keyof typeof productTrends].avgUnitCost}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="border-border bg-card">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-muted-foreground">Avg Margin</p>
+                    <p className="text-2xl font-semibold text-emerald">
+                      {productTrends[selectedProduct as keyof typeof productTrends].avgMargin}%
+                    </p>
+                  </CardContent>
+                </Card>
+              </>
+            )}
           </div>
 
           <Card className="border-border bg-card">
@@ -440,49 +527,49 @@ export default function ReportsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {productTrends[
-                      selectedProduct as keyof typeof productTrends
-                    ]?.batches.map((batch) => (
-                      <tr key={batch.po} className="hover:bg-muted/30">
-                        <td className="py-3">
-                          <span className="font-mono text-sm text-green-link">
-                            {batch.po}
-                          </span>
-                        </td>
-                        <td className="py-3 text-right text-sm">
-                          <span
-                            className={
-                              batch.wastage > 10
-                                ? "text-crimson"
-                                : batch.wastage > 8
+                    {productTrends[selectedProduct as keyof typeof productTrends]?.batches.map(
+                      (batch) => (
+                        <tr key={batch.po} className="hover:bg-muted/30">
+                          <td className="py-3">
+                            <span className="font-mono text-sm text-green-link">
+                              {batch.po}
+                            </span>
+                          </td>
+                          <td className="py-3 text-right text-sm">
+                            <span
+                              className={
+                                batch.wastage > 10
+                                  ? "text-crimson"
+                                  : batch.wastage > 8
                                   ? "text-amber"
                                   : "text-emerald"
-                            }
-                          >
-                            {batch.wastage}%
-                          </span>
-                        </td>
-                        <td className="py-3 text-right text-sm">
-                          <span
-                            className={
-                              batch.shrinkage > 3
-                                ? "text-crimson"
-                                : batch.shrinkage > 2
+                              }
+                            >
+                              {batch.wastage}%
+                            </span>
+                          </td>
+                          <td className="py-3 text-right text-sm">
+                            <span
+                              className={
+                                batch.shrinkage > 3
+                                  ? "text-crimson"
+                                  : batch.shrinkage > 2
                                   ? "text-amber"
                                   : "text-emerald"
-                            }
-                          >
-                            {batch.shrinkage}%
-                          </span>
-                        </td>
-                        <td className="py-3 text-right font-mono text-sm text-foreground">
-                          KES {batch.unitCost}
-                        </td>
-                        <td className="py-3 text-right text-sm text-emerald">
-                          {batch.margin}%
-                        </td>
-                      </tr>
-                    ))}
+                              }
+                            >
+                              {batch.shrinkage}%
+                            </span>
+                          </td>
+                          <td className="py-3 text-right font-mono text-sm text-foreground">
+                            KES {batch.unitCost}
+                          </td>
+                          <td className="py-3 text-right text-sm text-emerald">
+                            {batch.margin}%
+                          </td>
+                        </tr>
+                      )
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -499,10 +586,7 @@ export default function ReportsPage() {
                   Financial Summary
                 </CardTitle>
                 <p className="text-xs text-muted-foreground">
-                  Last sync:{" "}
-                  {new Date(
-                    financialSummary.lastSyncTimestamp,
-                  ).toLocaleString()}
+                  Last sync: {new Date(financialSummary.lastSyncTimestamp).toLocaleString()}
                 </p>
               </div>
             </CardHeader>
@@ -570,42 +654,12 @@ export default function ReportsPage() {
             <CardContent>
               <div className="space-y-4">
                 {[
-                  {
-                    name: "Sourcing",
-                    amount: 51500,
-                    percent: 61.3,
-                    color: "bg-violet",
-                  },
-                  {
-                    name: "Labour",
-                    amount: 12800,
-                    percent: 15.2,
-                    color: "bg-blue",
-                  },
-                  {
-                    name: "Packaging Materials",
-                    amount: 9600,
-                    percent: 11.4,
-                    color: "bg-emerald",
-                  },
-                  {
-                    name: "Delivery/Transport",
-                    amount: 5350,
-                    percent: 6.4,
-                    color: "bg-amber",
-                  },
-                  {
-                    name: "Electricity",
-                    amount: 3200,
-                    percent: 3.8,
-                    color: "bg-purple",
-                  },
-                  {
-                    name: "Quality Control",
-                    amount: 1500,
-                    percent: 1.9,
-                    color: "bg-tomato",
-                  },
+                  { name: "Sourcing", amount: 51500, percent: 61.3, color: "bg-violet" },
+                  { name: "Labour", amount: 12800, percent: 15.2, color: "bg-blue" },
+                  { name: "Packaging Materials", amount: 9600, percent: 11.4, color: "bg-emerald" },
+                  { name: "Delivery/Transport", amount: 5350, percent: 6.4, color: "bg-amber" },
+                  { name: "Electricity", amount: 3200, percent: 3.8, color: "bg-purple" },
+                  { name: "Quality Control", amount: 1500, percent: 1.9, color: "bg-tomato" },
                 ].map((cost) => (
                   <div key={cost.name} className="space-y-1">
                     <div className="flex items-center justify-between text-sm">

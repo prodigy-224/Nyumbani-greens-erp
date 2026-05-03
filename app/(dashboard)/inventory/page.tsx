@@ -29,11 +29,136 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import inventoryData from "@/data/inventory.json";
 
-const inventoryItems = inventoryData.inventoryItems;
+// Mock inventory data
+const inventoryItems = [
+  {
+    product: "Kunde",
+    batches: [
+      {
+        po: "PO-20260428-001",
+        batchDate: "2026-04-28",
+        daysSinceIntake: 0,
+        punnetsPacked: 85,
+        punnetsIssued: 0,
+        punnetsSold: 0,
+        punnetsRemaining: 85,
+        shrinkage: 0,
+        punnetWeight: 250,
+      },
+      {
+        po: "PO-20260426-001",
+        batchDate: "2026-04-26",
+        daysSinceIntake: 2,
+        punnetsPacked: 120,
+        punnetsIssued: 100,
+        punnetsSold: 78,
+        punnetsRemaining: 42,
+        shrinkage: 3,
+        punnetWeight: 250,
+      },
+    ],
+    totalRemaining: 127,
+    freshness: "Fresh",
+  },
+  {
+    product: "Managu",
+    batches: [
+      {
+        po: "PO-20260428-001",
+        batchDate: "2026-04-28",
+        daysSinceIntake: 0,
+        punnetsPacked: 74,
+        punnetsIssued: 0,
+        punnetsSold: 0,
+        punnetsRemaining: 74,
+        shrinkage: 0,
+        punnetWeight: 250,
+      },
+    ],
+    totalRemaining: 74,
+    freshness: "Fresh",
+  },
+  {
+    product: "Terere",
+    batches: [
+      {
+        po: "PO-20260427-003",
+        batchDate: "2026-04-27",
+        daysSinceIntake: 1,
+        punnetsPacked: 107,
+        punnetsIssued: 80,
+        punnetsSold: 65,
+        punnetsRemaining: 42,
+        shrinkage: 2,
+        punnetWeight: 250,
+      },
+    ],
+    totalRemaining: 42,
+    freshness: "Good",
+  },
+  {
+    product: "Mrenda",
+    batches: [
+      {
+        po: "PO-20260427-003",
+        batchDate: "2026-04-27",
+        daysSinceIntake: 1,
+        punnetsPacked: 92,
+        punnetsIssued: 70,
+        punnetsSold: 55,
+        punnetsRemaining: 37,
+        shrinkage: 1,
+        punnetWeight: 250,
+      },
+    ],
+    totalRemaining: 37,
+    freshness: "Good",
+  },
+  {
+    product: "Sukuma",
+    batches: [
+      {
+        po: "PO-20260427-003",
+        batchDate: "2026-04-27",
+        daysSinceIntake: 1,
+        punnetsPacked: 142,
+        punnetsIssued: 120,
+        punnetsSold: 98,
+        punnetsRemaining: 44,
+        shrinkage: 4,
+        punnetWeight: 250,
+      },
+    ],
+    totalRemaining: 44,
+    freshness: "Good",
+  },
+  {
+    product: "Spinach",
+    batches: [
+      {
+        po: "PO-20260427-002",
+        batchDate: "2026-04-27",
+        daysSinceIntake: 1,
+        punnetsPacked: 140,
+        punnetsIssued: 140,
+        punnetsSold: 112,
+        punnetsRemaining: 28,
+        shrinkage: 5,
+        punnetWeight: 250,
+      },
+    ],
+    totalRemaining: 28,
+    freshness: "Monitor",
+  },
+];
 
-const shrinkageReasons = ["Damaged", "Expired", "Quality Reject", "Other"];
+const shrinkageReasons = [
+  "Damaged",
+  "Expired",
+  "Quality Reject",
+  "Other",
+];
 
 const freshnessColors: Record<string, string> = {
   Fresh: "bg-emerald/20 text-emerald border border-emerald/30",
@@ -56,12 +181,12 @@ export default function InventoryPage() {
 
   const totalPunnets = inventoryItems.reduce(
     (sum, item) => sum + item.totalRemaining,
-    0,
+    0
   );
 
   const totalBatches = inventoryItems.reduce(
     (sum, item) => sum + item.batches.length,
-    0,
+    0
   );
 
   const avgShrinkage =
@@ -70,7 +195,7 @@ export default function InventoryPage() {
         sum +
         item.batches.reduce((bSum, b) => bSum + b.shrinkage, 0) /
           item.batches.length,
-      0,
+      0
     ) / inventoryItems.length;
 
   const filteredItems = inventoryItems.filter((item) => {
@@ -225,9 +350,7 @@ export default function InventoryPage() {
                       </span>
                     </div>
                     <Progress
-                      value={
-                        (batch.punnetsRemaining / batch.punnetsPacked) * 100
-                      }
+                      value={(batch.punnetsRemaining / batch.punnetsPacked) * 100}
                       className="h-2"
                     />
 
