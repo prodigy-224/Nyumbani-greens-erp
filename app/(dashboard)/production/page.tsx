@@ -145,7 +145,7 @@ const gradeColors: Record<string, string> = {
 };
 
 export default function ProductionPage() {
-  const [selectedBatch, setSelectedBatch] = useState<typeof productionBatches[0] | null>(null);
+  const [batches, setBatches] = useState(productionBatches);
   const [currentBatch, setCurrentBatch] = useState<typeof productionBatches[0] | null>(null);
   
   // State for each stage's form data per line item
@@ -161,16 +161,75 @@ export default function ProductionPage() {
   };
 
   const handleOpenBatch = (batch: typeof productionBatches[0]) => {
-    setSelectedBatch(batch);
-    setCurrentBatch(JSON.parse(JSON.stringify(batch))); // Deep copy to preserve original state
+    // Load existing data from the batch into the form states
+    const newIntakeData: typeof intakeData = {};
+    const newGradeData: typeof gradeData = {};
+    const newProcessingData: typeof processingData = {};
+    const newPackagingData: typeof packagingData = {};
+
+    batch.lineItems.forEach((item) => {
+      const key = `${batch.id}-${item.product}`;
+      newIntakeData[key] = {
+        receivedKg: item.receivedKg,
+        variance: item.variance,
+      };
+      if (item.grade) newGradeData[key] = item.grade;
+      if (item.preProcessKg) {
+        newProcessingData[key] = {
+          preProcessKg: item.preProcessKg,
+          postProcessKg: item.postProcessKg,
+          wastage: item.preProcessKg - item.postProcessKg,
+          wastagePercent: ((item.preProcessKg - item.postProcessKg) / item.preProcessKg) * 100,
+        };
+      }
+      if (item.punnets) {
+        newPackagingData[key] = {
+          punnets: item.punnets,
+          punnetWeight: item.punnetWeight,
+        };
+      }
+    });
+
+    setIntakeData(newIntakeData);
+    setGradeData(newGradeData);
+    setProcessingData(newProcessingData);
+    setPackagingData(newPackagingData);
+    setCurrentBatch(JSON.parse(JSON.stringify(batch)));
   };
 
-  const handleAdvanceStage = () => {
+  const handleCompleteStage = () => {
     if (!currentBatch) return;
-    
-    // Advance the stage
-    const newBatch = { ...currentBatch, stage: currentBatch.stage + 1 };
-    setCurrentBatch(newBatch);
+
+    // Merge all entered data into the batch
+    const updatedLineItems = currentBatch.lineItems.map((item) => {
+      const key = `${currentBatch.id}-${item.product}`;
+      return {
+        ...item,
+        receivedKg: intakeData[key]?.receivedKg ?? item.receivedKg,
+        variance: intakeData[key]?.variance ?? item.variance,
+        grade: gradeData[key] ?? item.grade,
+        preProcessKg: processingData[key]?.preProcessKg ?? item.preProcessKg,
+        postProcessKg: processingData[key]?.postProcessKg ?? item.postProcessKg,
+        wastage: processingData[key]?.wastagePercent ?? item.wastage,
+        punnets: packagingData[key]?.punnets ?? item.punnets,
+        punnetWeight: packagingData[key]?.punnetWeight ?? item.punnetWeight,
+      };
+    });
+
+    // Create updated batch and advance stage
+    const updatedBatch = {
+      ...currentBatch,
+      lineItems: updatedLineItems,
+      stage: Math.min(currentBatch.stage + 1, 3), // Max stage is 3
+    };
+
+    // Update batches list
+    setBatches(
+      batches.map((b) => (b.id === updatedBatch.id ? updatedBatch : b))
+    );
+
+    // Close modal
+    setCurrentBatch(null);
   };
 
   const getLineItemKey = (lineItem: string) => {
@@ -190,7 +249,7 @@ export default function ProductionPage() {
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="text-amber border-amber/30">
             <Clock className="mr-1 h-3 w-3" />
-            {productionBatches.length} batches in production
+            {batches.length} batches in production
           </Badge>
         </div>
       </div>
@@ -245,7 +304,7 @@ export default function ProductionPage() {
 
       {/* Production Queue */}
       <div className="space-y-4">
-        {productionBatches.map((batch) => (
+        {batches.map((batch) => (
           <Card
             key={batch.id}
             className="border-border bg-card hover:border-green-border transition-colors cursor-pointer"
@@ -768,7 +827,7 @@ export default function ProductionPage() {
                 {currentBatch.stage < 3 && (
                   <Button 
                     className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90 active:scale-95 transition-all"
-                    onClick={handleAdvanceStage}
+                    onClick={handleCompleteStage}
                   >
                     Complete {stages[currentBatch.stage].name}
                   </Button>
