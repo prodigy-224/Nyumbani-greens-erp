@@ -149,10 +149,10 @@ export default function ProductionPage() {
   const [currentBatch, setCurrentBatch] = useState<typeof productionBatches[0] | null>(null);
   
   // State for each stage's form data per line item
-  const [intakeData, setIntakeData] = useState<Record<string, { receivedKg: number; variance: number }>({});
-  const [gradeData, setGradeData] = useState<Record<string, string>>({});
-  const [processingData, setProcessingData] = useState<Record<string, { preProcessKg: number; postProcessKg: number; wastage: number; wastagePercent: number }>>({});
-  const [packagingData, setPackagingData] = useState<Record<string, { punnets: number; punnetWeight: number }>>({});
+  const [intakeData, setIntakeData] = useState<{[key: string]: { receivedKg: number; variance: number }}>({});
+  const [gradeData, setGradeData] = useState<{[key: string]: string}>({});
+  const [processingData, setProcessingData] = useState<{[key: string]: { preProcessKg: number; postProcessKg: number; wastage: number; wastagePercent: number }}>({});
+  const [packagingData, setPackagingData] = useState<{[key: string]: { punnets: number; punnetWeight: number }}>({});
 
   const getStageStatus = (batchStage: number, stageIndex: number) => {
     if (stageIndex < batchStage) return "complete";
