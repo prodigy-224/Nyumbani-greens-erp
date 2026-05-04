@@ -13,6 +13,8 @@ import {
   Settings,
   ExternalLink,
   XCircle,
+  Plus,
+  RotateCcw,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,6 +34,14 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 // Mock data
 const syncStatus = {
@@ -181,10 +191,61 @@ const statusColors: Record<string, string> = {
 
 export default function ZohoPage() {
   const [isManualSyncing, setIsManualSyncing] = useState(false);
+  const [isNewIssueOpen, setIsNewIssueOpen] = useState(false);
+  const [stockIssuesList, setStockIssuesList] = useState(stockIssues);
+  const [newStockIssue, setNewStockIssue] = useState({
+    batchPO: "",
+    punnets: 0,
+    issueDate: new Date().toISOString().split('T')[0],
+    note: "",
+  });
+  const [failedIssues, setFailedIssues] = useState<string[]>(["SI-005"]);
 
   const handleManualSync = () => {
     setIsManualSyncing(true);
     setTimeout(() => setIsManualSyncing(false), 3000);
+  };
+
+  const handleRetryPush = (issueId: string) => {
+    // Simulate retry - randomly succeed or fail
+    const success = Math.random() > 0.3;
+    if (success) {
+      setStockIssuesList(
+        stockIssuesList.map((issue) =>
+          issue.id === issueId ? { ...issue, pushStatus: "Success" } : issue
+        )
+      );
+      setFailedIssues(failedIssues.filter((id) => id !== issueId));
+    }
+  };
+
+  const handleCreateStockIssue = () => {
+    if (!newStockIssue.batchPO) return;
+
+    const newIssue = {
+      id: `SI-${String(stockIssuesList.length + 1).padStart(3, "0")}`,
+      po: newStockIssue.batchPO,
+      product: newStockIssue.batchPO.split("-")[2] || "Unknown",
+      sku: `${newStockIssue.batchPO.split("-")[2] || "PRODUCT"}-${newStockIssue.batchPO}`,
+      punnetsIssued: newStockIssue.punnets,
+      issueDate: new Date(newStockIssue.issueDate).toISOString(),
+      pushStatus: Math.random() > 0.2 ? "Success" : "Failed",
+      punnetsSold: 0,
+      punnetsUnsold: newStockIssue.punnets,
+    };
+
+    setStockIssuesList([...stockIssuesList, newIssue]);
+    if (newIssue.pushStatus === "Failed") {
+      setFailedIssues([...failedIssues, newIssue.id]);
+    }
+    
+    setNewStockIssue({
+      batchPO: "",
+      punnets: 0,
+      issueDate: new Date().toISOString().split('T')[0],
+      note: "",
+    });
+    setIsNewIssueOpen(false);
   };
 
   return (
@@ -306,6 +367,86 @@ export default function ZohoPage() {
                   Stock Issues to Zoho
                 </CardTitle>
                 <div className="flex items-center gap-2">
+                  <Dialog open={isNewIssueOpen} onOpenChange={setIsNewIssueOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90" size="sm">
+                        <Plus className="mr-2 h-4 w-4" />
+                        New Stock Issue
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-md bg-card border-border">
+                      <DialogHeader>
+                        <DialogTitle>Create New Stock Issue</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">
+                            Batch (PO / Product)
+                          </label>
+                          <Select value={newStockIssue.batchPO} onValueChange={(value) => setNewStockIssue({ ...newStockIssue, batchPO: value })}>
+                            <SelectTrigger className="bg-input border-border">
+                              <SelectValue placeholder="Select batch" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="PO-20260428-001">PO-20260428-001 - Kunde</SelectItem>
+                              <SelectItem value="PO-20260427-002">PO-20260427-002 - Spinach</SelectItem>
+                              <SelectItem value="PO-20260427-003">PO-20260427-003 - Terere</SelectItem>
+                              <SelectItem value="PO-20260426-001">PO-20260426-001 - Managu</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">
+                            Punnets to Issue
+                          </label>
+                          <Input
+                            type="number"
+                            placeholder="Enter quantity"
+                            value={newStockIssue.punnets || ""}
+                            onChange={(e) => setNewStockIssue({ ...newStockIssue, punnets: parseInt(e.target.value) || 0 })}
+                            className="bg-input border-border"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">
+                            Issue Date
+                          </label>
+                          <Input
+                            type="date"
+                            value={newStockIssue.issueDate}
+                            onChange={(e) => setNewStockIssue({ ...newStockIssue, issueDate: e.target.value })}
+                            className="bg-input border-border"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">
+                            Note (optional)
+                          </label>
+                          <Textarea
+                            placeholder="Add notes..."
+                            value={newStockIssue.note}
+                            onChange={(e) => setNewStockIssue({ ...newStockIssue, note: e.target.value })}
+                            className="bg-input border-border min-h-24"
+                          />
+                        </div>
+
+                        <div className="flex gap-2 justify-end pt-4 border-t border-border">
+                          <Button variant="outline" onClick={() => setIsNewIssueOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button 
+                            className="bg-nyumbani-green text-white hover:bg-nyumbani-green/90 active:scale-95 transition-all"
+                            onClick={handleCreateStockIssue}
+                          >
+                            Create Issue
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                   <div className="relative max-w-xs">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
@@ -348,8 +489,8 @@ export default function ZohoPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {stockIssues.map((issue) => (
-                      <tr key={issue.id} className="hover:bg-muted/30">
+                    {stockIssuesList.map((issue) => (
+                      <tr key={issue.id} className={failedIssues.includes(issue.id) ? "bg-crimson/5 border-l-2 border-crimson" : "hover:bg-muted/30"}>
                         <td className="py-3">
                           <span className="font-mono text-sm text-foreground">
                             {issue.id}
@@ -383,9 +524,22 @@ export default function ZohoPage() {
                           {issue.punnetsUnsold}
                         </td>
                         <td className="py-3">
-                          <Badge className={statusColors[issue.pushStatus]}>
-                            {issue.pushStatus}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge className={statusColors[issue.pushStatus]}>
+                              {issue.pushStatus}
+                            </Badge>
+                            {failedIssues.includes(issue.id) && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-6 text-xs text-crimson hover:text-crimson/90"
+                                onClick={() => handleRetryPush(issue.id)}
+                              >
+                                <RotateCcw className="mr-1 h-3 w-3" />
+                                Retry
+                              </Button>
+                            )}
+                          </div>
                         </td>
                         <td className="py-3 text-right text-sm text-muted-foreground">
                           {new Date(issue.issueDate).toLocaleDateString()}

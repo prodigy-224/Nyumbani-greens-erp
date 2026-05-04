@@ -198,6 +198,16 @@ export default function InventoryPage() {
       0
     ) / inventoryItems.length;
 
+  const getDaysSinceIntakeColor = (days: number) => {
+    if (days < 3) return "text-emerald";
+    if (days < 7) return "text-amber";
+    return "text-crimson";
+  };
+
+  const generateZohoSKU = (product: string, po: string) => {
+    return `${product}-${po}`;
+  };
+
   const filteredItems = inventoryItems.filter((item) => {
     const matchesSearch = item.product
       .toLowerCase()
@@ -330,23 +340,33 @@ export default function InventoryPage() {
                   key={batch.po}
                   className="rounded-lg border border-border bg-background p-3"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-mono text-xs text-green-link">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-mono text-sm text-violet">
                       {batch.po}
                     </span>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <div className={`flex items-center gap-1 text-xs font-medium ${getDaysSinceIntakeColor(batch.daysSinceIntake)}`}>
                       <Clock className="h-3 w-3" />
                       {batch.daysSinceIntake === 0
                         ? "Today"
-                        : `${batch.daysSinceIntake}d ago`}
+                        : `${batch.daysSinceIntake}d`}
                     </div>
                   </div>
 
+                  {/* Zoho SKU */}
+                  <p className="text-xs text-muted-foreground mb-2">
+                    Zoho SKU: <span className="font-mono text-violet">{generateZohoSKU(item.product, batch.po.replace("PO-", "PO"))}</span>
+                  </p>
+
+                  {/* Batch Date */}
+                  <p className="text-xs text-muted-foreground mb-3">
+                    {new Date(batch.batchDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </p>
+
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Stock Level</span>
+                      <span className="text-muted-foreground">Punnets</span>
                       <span className="text-foreground">
-                        {batch.punnetsRemaining} / {batch.punnetsPacked}
+                        <span className="text-emerald font-medium">{batch.punnetsRemaining}</span> remaining / {batch.punnetsPacked} packed
                       </span>
                     </div>
                     <Progress
@@ -354,7 +374,7 @@ export default function InventoryPage() {
                       className="h-2"
                     />
 
-                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border text-xs">
+                    <div className="grid grid-cols-4 gap-2 pt-2 border-t border-border text-xs">
                       <div>
                         <p className="text-muted-foreground">Issued</p>
                         <p className="text-foreground font-medium">
@@ -369,20 +389,22 @@ export default function InventoryPage() {
                       </div>
                       <div>
                         <p className="text-muted-foreground">Shrinkage</p>
-                        <p
-                          className={`font-medium ${
-                            batch.shrinkage > 3 ? "text-crimson" : "text-amber"
-                          }`}
-                        >
-                          {batch.shrinkage}
+                        <p className="text-foreground font-medium">
+                          {batch.shrinkage} ({((batch.shrinkage / batch.punnetsPacked) * 100).toFixed(1)}%)
                         </p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground text-xs">Sync</p>
+                        <Badge className="bg-emerald/20 text-emerald border border-emerald/30 text-xs">
+                          Live
+                        </Badge>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex gap-2 mt-3 pt-2 border-t border-border">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       className="flex-1 text-xs"
                       onClick={() =>
@@ -395,8 +417,9 @@ export default function InventoryPage() {
                       Record Shrinkage
                     </Button>
                     <Button
+                      variant="ghost"
                       size="sm"
-                      className="flex-1 text-xs bg-nyumbani-green text-white hover:bg-nyumbani-green/90"
+                      className="flex-1 text-xs"
                     >
                       Issue to Zoho
                     </Button>

@@ -11,6 +11,9 @@ import {
   AlertTriangle,
   TrendingUp,
   Calculator,
+  ChevronDown,
+  History,
+  Lock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,7 +35,7 @@ import {
 } from "@/components/ui/tabs";
 
 // Mock cost catalogue data
-const costCatalogue = [
+const costCatalogueBase = [
   {
     id: 1,
     name: "Labour",
@@ -40,6 +43,10 @@ const costCatalogue = [
     ratePerPunnet: 8.0,
     effectiveDate: "2026-01-01",
     active: true,
+    history: [
+      { rate: 7.0, effectiveDate: "2025-10-01", changedDate: "2025-10-01" },
+      { rate: 8.0, effectiveDate: "2026-01-01", changedDate: "2026-01-01" },
+    ],
   },
   {
     id: 2,
@@ -48,6 +55,10 @@ const costCatalogue = [
     ratePerPunnet: 3.5,
     effectiveDate: "2026-01-01",
     active: true,
+    history: [
+      { rate: 3.0, effectiveDate: "2025-08-01", changedDate: "2025-08-01" },
+      { rate: 3.5, effectiveDate: "2026-01-01", changedDate: "2026-01-01" },
+    ],
   },
   {
     id: 3,
@@ -56,6 +67,10 @@ const costCatalogue = [
     ratePerPunnet: 12.0,
     effectiveDate: "2026-03-15",
     active: true,
+    history: [
+      { rate: 10.0, effectiveDate: "2025-11-01", changedDate: "2025-11-01" },
+      { rate: 12.0, effectiveDate: "2026-03-15", changedDate: "2026-03-15" },
+    ],
   },
   {
     id: 4,
@@ -64,6 +79,9 @@ const costCatalogue = [
     ratePerPunnet: 5.0,
     effectiveDate: "2026-01-01",
     active: true,
+    history: [
+      { rate: 5.0, effectiveDate: "2026-01-01", changedDate: "2026-01-01" },
+    ],
   },
   {
     id: 5,
@@ -72,6 +90,9 @@ const costCatalogue = [
     ratePerPunnet: 2.0,
     effectiveDate: "2026-02-01",
     active: true,
+    history: [
+      { rate: 2.0, effectiveDate: "2026-02-01", changedDate: "2026-02-01" },
+    ],
   },
   {
     id: 6,
@@ -80,6 +101,10 @@ const costCatalogue = [
     ratePerPunnet: 4.0,
     effectiveDate: "2025-06-01",
     active: false,
+    history: [
+      { rate: 3.0, effectiveDate: "2025-01-01", changedDate: "2025-01-01" },
+      { rate: 4.0, effectiveDate: "2025-06-01", changedDate: "2025-06-01" },
+    ],
   },
 ];
 
@@ -152,11 +177,20 @@ const batchCosts = [
 
 export default function CostsPage() {
   const [isAddCostOpen, setIsAddCostOpen] = useState(false);
+  const [costCatalogue, setCostCatalogue] = useState(costCatalogueBase);
+  const [historyModal, setHistoryModal] = useState<number | null>(null);
+  const [selectedBatchPO, setSelectedBatchPO] = useState("PO-20260427-003");
   const [newCostType, setNewCostType] = useState({
     name: "",
     description: "",
     ratePerPunnet: 0,
   });
+
+  const handleToggleCostStatus = (id: number, active: boolean) => {
+    setCostCatalogue(
+      costCatalogue.map((c) => (c.id === id ? { ...c, active: !active } : c))
+    );
+  };
 
   const totalProductionRate = costCatalogue
     .filter((c) => c.active)
@@ -369,10 +403,21 @@ export default function CostsPage() {
                           {cost.effectiveDate}
                         </td>
                         <td className="py-3 text-center">
-                          <Switch checked={cost.active} />
+                          <Badge className={cost.active ? "bg-emerald/20 text-emerald border border-emerald/30" : "bg-muted text-muted-foreground border border-border"}>
+                            {cost.active ? "Active" : "Inactive"}
+                          </Badge>
                         </td>
                         <td className="py-3 text-right">
                           <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 text-xs text-muted-foreground hover:text-foreground"
+                              onClick={() => setHistoryModal(cost.id)}
+                            >
+                              <History className="mr-1 h-3 w-3" />
+                              History
+                            </Button>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -382,10 +427,11 @@ export default function CostsPage() {
                             </Button>
                             <Button
                               variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-crimson hover:text-crimson"
+                              size="sm"
+                              className={`h-8 text-xs ${cost.active ? "text-crimson hover:text-crimson" : "text-emerald hover:text-emerald"}`}
+                              onClick={() => handleToggleCostStatus(cost.id, cost.active)}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              {cost.active ? "Deactivate" : "Reactivate"}
                             </Button>
                           </div>
                         </td>
@@ -400,10 +446,35 @@ export default function CostsPage() {
 
         {/* Batch Costs Tab */}
         <TabsContent value="batches" className="space-y-4">
+          {/* Batch Selector */}
+          <Card className="border-border bg-card">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium text-foreground">
+                  Select Batch (PO):
+                </label>
+                <Select value={selectedBatchPO} onValueChange={setSelectedBatchPO}>
+                  <SelectTrigger className="w-80 bg-input border-border">
+                    <SelectValue placeholder="Select PO" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PO-20260427-003">PO-20260427-003</SelectItem>
+                    <SelectItem value="PO-20260428-001">PO-20260428-001</SelectItem>
+                    <SelectItem value="PO-20260426-003">PO-20260426-003</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground ml-auto">
+                  Costs snapshot taken on 2026-04-27 — rates frozen
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Batch Cost Breakdown */}
           <Card className="border-border bg-card">
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-medium">
-                Batch Cost Breakdown - PO-20260427-003
+                Batch Cost Breakdown - {selectedBatchPO}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -589,6 +660,48 @@ export default function CostsPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Rate History Modal */}
+      {historyModal && (
+        <Dialog open={!!historyModal} onOpenChange={() => setHistoryModal(null)}>
+          <DialogContent className="max-w-md bg-card border-border">
+            <DialogHeader>
+              <DialogTitle>
+                Rate History - {costCatalogue.find((c) => c.id === historyModal)?.name}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {costCatalogue
+                  .find((c) => c.id === historyModal)
+                  ?.history?.map((entry, idx) => (
+                    <div key={idx} className="p-3 rounded-lg bg-muted/30 border border-border">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="font-mono text-sm font-medium text-gold-link">
+                          KES {entry.rate.toFixed(2)} / punnet
+                        </p>
+                        <Badge variant="outline" className="text-xs">
+                          {idx === 0 ? "Current" : "Previous"}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Effective: {new Date(entry.effectiveDate).toLocaleDateString()}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Changed: {new Date(entry.changedDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                  ))}
+              </div>
+              <div className="flex justify-end pt-4 border-t border-border">
+                <Button variant="outline" onClick={() => setHistoryModal(null)}>
+                  Close
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
