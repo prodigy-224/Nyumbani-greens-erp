@@ -46,11 +46,6 @@ export function Navigation() {
 
         {/* Right side */}
         <div className="flex items-center gap-4">
-          {/* Create PO Button - Desktop */}
-          <button className="hidden rounded-full border border-green-border bg-[rgba(45,138,62,0.15)] px-6 py-2 text-sm font-medium text-green-link transition-colors hover:bg-[rgba(45,138,62,0.25)] lg:block">
-            Create Product Order
-          </button>
-
           {/* Notification Bell */}
           <button className="relative rounded-md p-2 text-text-muted transition-colors hover:bg-secondary hover:text-text-primary">
             <Bell className="h-5 w-5" />
@@ -85,12 +80,9 @@ export function Navigation() {
                 className="block rounded-md px-3 py-2 text-base font-medium text-text-muted hover:bg-secondary hover:text-text-primary"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {item.name}
-              </a>
+              {item.name}
+                </a>
             ))}
-            <button className="mt-4 w-full rounded-full border border-green-border bg-[rgba(45,138,62,0.15)] px-6 py-3 text-sm font-medium text-green-link">
-              Create Product Order
-            </button>
           </div>
         </div>
       )}

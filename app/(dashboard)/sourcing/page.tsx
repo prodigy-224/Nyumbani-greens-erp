@@ -144,6 +144,8 @@ export default function SourcingPage() {
   const [selectedPO, setSelectedPO] = useState<typeof productOrders[0] | null>(null);
   const [createdPOs, setCreatedPOs] = useState<typeof productOrders>([]);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [isEditingPO, setIsEditingPO] = useState(false);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   
   // New PO form state
   const [newPO, setNewPO] = useState({
@@ -253,6 +255,34 @@ export default function SourcingPage() {
     setCreatedPOs([...createdPOs, newPORecord]);
     resetForm();
     setIsCreateOpen(false);
+  };
+
+  const handleUpdatePaymentStatus = (paymentStatus: "Paid" | "Pending") => {
+    if (!selectedPO) return;
+    
+    // Update the PO with new payment status
+    const updatedCreatedPOs = createdPOs.map((po) =>
+      po.id === selectedPO.id ? { ...po, paymentStatus } : po
+    );
+    setCreatedPOs(updatedCreatedPOs);
+    setSelectedPO({ ...selectedPO, paymentStatus });
+    setIsPaymentOpen(false);
+  };
+
+  const handleEditPO = () => {
+    if (!selectedPO) return;
+    setIsEditingPO(true);
+  };
+
+  const handleSaveEditedPO = () => {
+    if (!selectedPO) return;
+    
+    // Update the PO in the created list
+    const updatedCreatedPOs = createdPOs.map((po) =>
+      po.id === selectedPO.id ? selectedPO : po
+    );
+    setCreatedPOs(updatedCreatedPOs);
+    setIsEditingPO(false);
   };
 
   const resetForm = () => {
@@ -615,9 +645,13 @@ export default function SourcingPage() {
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleEditPO(); }}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => { e.preventDefault(); setIsPaymentOpen(true); }}>
+                            <DollarSign className="mr-2 h-4 w-4" />
+                            Confirm Payment
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-crimson">
                             <Trash2 className="mr-2 h-4 w-4" />
@@ -734,11 +768,11 @@ export default function SourcingPage() {
 
               {/* Actions */}
               <div className="flex justify-end gap-2 pt-4 border-t border-border">
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => handleEditPO()}>
                   Edit PO
                 </Button>
                 {selectedPO.paymentStatus === "Pending" && (
-                  <Button variant="outline" className="text-amber">
+                  <Button variant="outline" onClick={() => setIsPaymentOpen(true)} className="text-amber">
                     Mark as Paid
                   </Button>
                 )}
@@ -747,6 +781,54 @@ export default function SourcingPage() {
                     Confirm & Lock
                   </Button>
                 )}
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Payment Confirmation Modal */}
+      {selectedPO && (
+        <Dialog open={isPaymentOpen} onOpenChange={setIsPaymentOpen}>
+          <DialogContent className="max-w-md bg-card border-border">
+            <DialogHeader>
+              <DialogTitle>Confirm Payment</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="p-4 rounded-lg bg-muted/30 border border-border">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">
+                  PO Number
+                </p>
+                <p className="font-mono text-lg text-green-link mb-4">
+                  {selectedPO.id}
+                </p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">
+                  Amount
+                </p>
+                <p className="text-2xl font-semibold text-gold-link">
+                  KES {selectedPO.totalCost.toLocaleString()}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-foreground">
+                  Mark payment as completed?
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  This will update the payment status to "Paid"
+                </p>
+              </div>
+
+              <div className="flex gap-2 justify-end pt-4 border-t border-border">
+                <Button variant="outline" onClick={() => setIsPaymentOpen(false)}>
+                  Cancel
+                </Button>
+                <Button 
+                  className="bg-emerald text-white hover:bg-emerald/90 active:scale-95 transition-all"
+                  onClick={() => handleUpdatePaymentStatus("Paid")}
+                >
+                  Confirm Payment
+                </Button>
               </div>
             </div>
           </DialogContent>
